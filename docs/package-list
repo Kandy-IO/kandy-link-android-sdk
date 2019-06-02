@@ -4,6 +4,7 @@ com.genband.mobile.api.services.call
 com.genband.mobile.api.services.calllog
 com.genband.mobile.api.services.im
 com.genband.mobile.api.services.presence
+com.genband.mobile.api.services.push
 com.genband.mobile.api.utilities
 com.genband.mobile.api.utilities.exception
 com.genband.mobile.core.webrtc.view
