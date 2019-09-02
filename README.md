@@ -3,7 +3,7 @@
 SDK jar file and WebRTC libraries for `armeabi`, `arm64-v8a` and `x86` architectures can be found in the
 [SDK collection](https://github.com/Kandy-IO/kandy-link-android-sdk/tree/master/dist).
 
-MD5 Checksum for SDK collection : e468f5620f182cfd6b15f70eb496f1d3
+MD5 Checksum for SDK collection : bd0fd82ec0e60ec526d9222f727deb45
 
 Compatible Android OS versions :
 
