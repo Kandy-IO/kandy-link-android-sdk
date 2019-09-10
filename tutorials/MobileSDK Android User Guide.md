@@ -32,7 +32,7 @@ This document provides help getting started developing your mobile application u
 
 The following items need to be complete prior to beginning work on your application:
 
-* You have downloaded the MobileSDK package from http://developer.genband.com/MobileSDK .
+* You have downloaded the MobileSDK package from [dist](https://github.com/Kandy-IO/kandy-link-android-sdk/tree/master/dist) folder .
 * You have extracted the contents of the MobileSDK package and located:
   * The MobileSDK jar file
   * The libjingle_peerconnection_so.so file
@@ -67,7 +67,7 @@ The following procedure uses Android Studio IDE to illustrate adding the Mobile 
 
     Note that, this is the minimum Android SDK API version that the demo application supports.
 
-    For the target SDK version, Google suggests to set API Level 26 or higher. Target SDK can be changed on **build.gradle** file after the project creation.
+    For the target SDK version, Please check Google suggestion from the [link](https://developer.android.com/distribute/best-practices/develop/target-sdk). Target SDK can be changed on **build.gradle** file after the project creation.
 
 ![alt text](images/get_started_3.png "")
 
@@ -700,7 +700,7 @@ Configuration.getInstance().setICEServers(servers);
 
 You also have the option of using external TURN/STUN servers while establishing calls rather than SPiDR's (Kandy Link) TURN server(s). The ICEServers property will store the address and username/password for the server(s).
 
-Use the addICEServer:username:password: method of the ICEServers object to define credentials.
+Use the addICEServer(iceServerURL, username, password) method of the ICEServers object to define credentials.
 
 ###### Example: Add a STUN server
 
@@ -2551,9 +2551,9 @@ The call state becomes INITIAL after the call object is created. The call state 
 
 The following impacts should be considered when managing your mobile application's performance:
 
-* The default video codec defined by the WebRTC code base is VP8. VP8 may have performance issues, resulting in high CPU usage, increased battery usage, and a heat increase on devices with less surface area for cooling. Alternative solutions to eliminate or lessen the impact of this behavior include:
+* The default video codec defined by the WebRTC code base is VP8. Although some Android devices have HW encode/decode support for VP8, neither most of the Android devices, nor iOS devices have VP8 HW support. For better performance HW encode /decode capabilities should be considered.  If HW supported codecs not being used, applications may have performance issues, resulting in high CPU usage, increased battery usage, and a heat increase on devices with less surface area for cooling. Alternative solutions to eliminate or lessen the impact of this behavior include:
 
-  * Using another codec (for example, H264 provides better CPU performance)
+  * Using HW supported codec (for example, H264 has HW support for most of the devices)
 
   * Using lower video resolution and fps (frame per second) in video calls
 
