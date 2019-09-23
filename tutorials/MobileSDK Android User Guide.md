@@ -1,7 +1,7 @@
 # Mobile SDK User Guide for Android
-Version Number: **4.6.2**
+Version Number: **5.0.0**
 <br>
-Revision Date: **September 2, 2019**
+Revision Date: **September 30, 2019**
 
 ## Mobile SDK overview
 
@@ -32,10 +32,6 @@ This document provides help getting started developing your mobile application u
 
 The following items need to be complete prior to beginning work on your application:
 
-* You have downloaded the MobileSDK package from http://developer.genband.com/MobileSDK .
-* You have extracted the contents of the MobileSDK package and located:
-  * The MobileSDK jar file
-  * The libjingle_peerconnection_so.so file
 * Your Android Studio development environment is set up and ready for new projects.
 * You are familiar with Android development fundamentals.
 * You know the IP address and port of the SPiDR/Kandy Link server.
@@ -44,20 +40,19 @@ The following items need to be complete prior to beginning work on your applicat
 
 ## Get Started
 
-This section provides an example of creating your Android project and using the Mobile SDK in your project. Android Studio 3.3 is used for this example, but you may use your development environment of choice to create your project.
+This section provides an example of creating your Android project and using the Mobile SDK in your project. Android Studio 3.4.2 is used for this example, but you may use your development environment of choice to create your project.
 
 ### Create your Android project
 
-The following procedure uses Android Studio IDE to illustrate adding the Mobile SDK library file to the Android application's build path.
+The following procedure uses Android Studio IDE to create a simple application which can use MobileSDK.   
 
 1. Open the development environment (in this example, Android Studio).
 2. Click **Start a new Android Studio project**.
-
-![alt text](images/get_started_1.png "")
-
+ ![alt text](images/get_started_1.png "")
+ 
 3. Select an activity or leave as default (Empty Activity) and click **Next**.
 
-![alt text](images/get_started_2.png "")
+	![alt text](images/get_started_2.png "")
 
 4. Fill in the configurations for your project.
 
@@ -67,52 +62,93 @@ The following procedure uses Android Studio IDE to illustrate adding the Mobile 
 
     Note that, this is the minimum Android SDK API version that the demo application supports.
 
-    For the target SDK version, Google suggests to set API Level 26 or higher. Target SDK can be changed on **build.gradle** file after the project creation.
+    For the target SDK version, Please check Google suggestion from the [link](https://developer.android.com/distribute/best-practices/develop/target-sdk). Target SDK can be changed on **build.gradle** file after the project creation.
 
-![alt text](images/get_started_3.png "")
+	![alt text](images/get_started_3.png "")
 
-5. Copy the Mobile SDK jar file under your application's **libs** folder.
 
+### Adding MobileSDK dependency to your project
+
+There are 2 option to add MobileSDK dependency to your project. You can add MobileSDK dependency from github repository or you can add it your project manually. This document will explain both options in detail. 
+
+
+#### Adding MobileSDK dependency to your project from GitHub repository
+1. Add MobileSDK repository url to your root level **build.gradle** file. 
+
+
+	```
+	allprojects {
+    	repositories {
+        	google()
+        	jcenter()
+
+        	maven {
+         	  url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
+        	}
+   		}
+	}
+	```
+	
 ![alt text](images/get_started_4.png "")
 
-6. In “MobileSDK-x.x.x.zip”, along with the MobileSDK_x.x.x.jar, you will also find native WebRTC library called "libjingle_peerconnection_so.so", compiled for different architectures.
+2. Add dependcy of MobileSDK to your app level **build.gradle** file.
 
-In Android projects the ones in “armeabi” and "arm64-v8a" folders will be used. If you wish to use simulator for testing, then you should use the "x86" library as well. Move those folders named under the **libs** folder in the project along with the "libjingle_peerconnection_so.so" files, described above, inside them.
+	```
+	implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}'
 
-![alt text](images/get_started_5.png "")
+	```
 
-7. Open **build.gradle** file, located under **app** module of **MobileSDKDemoApp** project. Add the configuration script below to the file, in order the application to locate libjingle library (and other JNI libraries if used in the application).
+	![alt text](images/get_started_5.png "")
 
-```
-android {
-    .
-    .
-    .
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
-}
-```
+	---
+	**NOTE**
 
-![alt text](images/get_started_6.png "")
+	Check latest version of MobileSDK from [GitHub](https://github.com/Kandy-IO/kandy-link-android-sdk). 
 
-10. An Android application project must be compatible with Java 8 when it is using Mobile SDK library. This necessity comes from the WebRTC library, its code is dependent on some Java 8 features. In order to set this compliance, open **build.gradle** file, located under **app** module of **MobileSDKDemoApp** project. Add the configuration script below to the file.
+	---
 
-```
-android {
-    .
-    .
-    .
-    compileOptions {
+
+#### Adding MobileSDK dependency to your project manually
+
+
+1. Download latest MobileSDK version from [GitHub](https://github.com/Kandy-IO/kandy-link-android-sdk) and copy **aar** file to your project **lib** folder.
+
+ ![alt text](images/get_started_6.png "")
+
+
+2. After that you need to inform gradle that your app will use manual aar files. To do that add **flatDir** path to your root level **build.gradle** file as in the example above.
+
+	```
+	flatDir {
+       dirs 'libs'
+   }
+	```
+ ![alt text](images/get_started_12.png "")
+
+3. Add dependcy of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
+
+	```
+	implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}@aars'
+
+	```
+
+	![alt text](images/get_started_13.png "")
+
+
+### Adding Java 8 support
+ An Android application project must be compatible with Java 8 when it is using Mobile SDK library. This necessity comes from the WebRTC library, its code is dependent on some Java 8 features. In order to set this compliance, open **build.gradle** file, located under **app** module of **MobileSDKDemoApp** project. Add the configuration script below to the file.
+
+	```	
+	android{
+		compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
-}
-```
-
+	}
+	```
+	
 ![alt text](images/get_started_7.png "")
+
 
 ### Use the Mobile SDK in your Android project
 
@@ -700,7 +736,7 @@ Configuration.getInstance().setICEServers(servers);
 
 You also have the option of using external TURN/STUN servers while establishing calls rather than SPiDR's (Kandy Link) TURN server(s). The ICEServers property will store the address and username/password for the server(s).
 
-Use the addICEServer:username:password: method of the ICEServers object to define credentials.
+Use the addICEServer(iceServerURL, username, password) method of the ICEServers object to define credentials.
 
 ###### Example: Add a STUN server
 
@@ -2551,9 +2587,9 @@ The call state becomes INITIAL after the call object is created. The call state 
 
 The following impacts should be considered when managing your mobile application's performance:
 
-* The default video codec defined by the WebRTC code base is VP8. VP8 may have performance issues, resulting in high CPU usage, increased battery usage, and a heat increase on devices with less surface area for cooling. Alternative solutions to eliminate or lessen the impact of this behavior include:
+* The default video codec defined by the WebRTC code base is VP8. Although some Android devices have HW encode/decode support for VP8, neither most of the Android devices, nor iOS devices have VP8 HW support. For better performance HW encode /decode capabilities should be considered.  If HW supported codecs not being used, applications may have performance issues, resulting in high CPU usage, increased battery usage, and a heat increase on devices with less surface area for cooling. Alternative solutions to eliminate or lessen the impact of this behavior include:
 
-  * Using another codec (for example, H264 provides better CPU performance)
+  * Using HW supported codec (for example, H264 has HW support for most of the devices)
 
   * Using lower video resolution and fps (frame per second) in video calls
 
