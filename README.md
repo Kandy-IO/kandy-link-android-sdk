@@ -4,7 +4,7 @@
 To integrate Kandy Link Android SDK to your project add gradle dependencies as described in above.
 
 ### Step 1
-Add Cpass Android SDK Maven url to your root level `build.gradle` file.
+Add Kandy Link SDK Maven url to your root level `build.gradle` file.
 ```
 allprojects {
     repositories {
@@ -18,7 +18,7 @@ allprojects {
 ```
 
 ### Step 2
-Add dependcy of Cpass Android SDK to your app level `build.gradle` file.
+Add dependcy of Kandy Link Android SDK to your app level `build.gradle` file.
 
 ```
 implementation 'com.kandy.mobile:kandylinkmobilesdk:5.0.0'
