@@ -87,6 +87,7 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 	}
 	```
 	
+	
 ![alt text](images/get_started_4.png "")
 
 
@@ -144,7 +145,8 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 	}
 	```
 
-	![alt text](images/get_started_7.png "")
+
+![alt text](images/get_started_7.png "")
 
 
 ### Use the Mobile SDK in your Android project
