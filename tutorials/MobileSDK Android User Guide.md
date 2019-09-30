@@ -71,8 +71,9 @@ The following procedure uses Android Studio IDE to create a simple application w
 
 There are 2 option to add MobileSDK dependency to your project. You can add MobileSDK dependency from github repository or you can add it your project manually. This document will explain both options in detail. 
 
+
 #### Adding MobileSDK dependency to your project from GitHub repository
-1. Add MobileSDK repository url to your root level **build.gradle** file.
+1. Add MobileSDK repository url to your root level **build.gradle** file. 
 
 
 	```
