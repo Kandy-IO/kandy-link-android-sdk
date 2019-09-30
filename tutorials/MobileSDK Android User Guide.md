@@ -87,7 +87,7 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 	}
 	```
 	
-	![alt text](images/get_started_4.png "")
+![alt text](images/get_started_4.png "")
 
 
 2. Add dependcy of MobileSDK to your app level **build.gradle** file.
