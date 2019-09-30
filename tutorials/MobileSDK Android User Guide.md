@@ -32,10 +32,6 @@ This document provides help getting started developing your mobile application u
 
 The following items need to be complete prior to beginning work on your application:
 
-* You have downloaded the MobileSDK package from http://developer.genband.com/MobileSDK .
-* You have extracted the contents of the MobileSDK package and located:
-  * The MobileSDK jar file
-  * The libjingle_peerconnection_so.so file
 * Your Android Studio development environment is set up and ready for new projects.
 * You are familiar with Android development fundamentals.
 * You know the IP address and port of the SPiDR/Kandy Link server.
