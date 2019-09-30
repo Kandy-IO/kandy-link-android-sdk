@@ -5,15 +5,16 @@ To integrate Kandy Link Android SDK to your project add gradle dependencies as d
 
 ### Step 1
 Add Kandy Link SDK Maven url to your root level `build.gradle` file.
+
 ```
 allprojects {
-    repositories {
-    ....
-        maven {
-            url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/releases/dist/"
-        }   
-    }
-    ...
+   	repositories {
+   	 ...
+      	 maven {
+       	     url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
+      	  }   
+   	 ...
+  	}
 }
 ```
 
@@ -21,7 +22,7 @@ allprojects {
 Add dependcy of Kandy Link Android SDK to your app level `build.gradle` file.
 
 ```
-implementation 'com.kandy.mobile:kandylinkmobilesdk:5.0.0'
+implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}'
 ```
 
 That's all! You can use Kandy Link Android SDK after you sync gradle.
