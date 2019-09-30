@@ -77,14 +77,15 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 
 	```
 		allprojects {
-   	 	repositories {
-    		...
-       		 maven {
-       		     url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
-      	 	 }   
-   	 		...
-   		 }
-		}
+    		repositories {
+        	google()
+        	jcenter()
+
+        	maven {
+         	   url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
+        	}
+    }
+}
 	```
 	
 	
