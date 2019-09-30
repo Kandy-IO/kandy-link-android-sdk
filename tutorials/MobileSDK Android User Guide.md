@@ -1,7 +1,7 @@
 # Mobile SDK User Guide for Android
-Version Number: **4.6.2**
+Version Number: **5.0.5**
 <br>
-Revision Date: **September 2, 2019**
+Revision Date: **September 30, 2019**
 
 ## Mobile SDK overview
 
