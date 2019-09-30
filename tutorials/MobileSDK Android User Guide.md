@@ -125,27 +125,22 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
  ![alt text](images/get_started_12.png "")
 
 3. Add dependcy of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
-	```	
-	implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}@aar'
-	```
+
 	![alt text](images/get_started_13.png "")
 
 
 ### Adding Java 8 support
  An Android application project must be compatible with Java 8 when it is using Mobile SDK library. This necessity comes from the WebRTC library, its code is dependent on some Java 8 features. In order to set this compliance, open **build.gradle** file, located under **app** module of **MobileSDKDemoApp** project. Add the configuration script below to the file.
 
-	```
-	android {
-  	 ...
-   	 compileOptions {
-       	targetCompatibility 1.8
+	```	
+	android{
+		compileOptions {
+        targetCompatibility 1.8
         sourceCompatibility 1.8
-   	 }
-   	 ...
+    }
 	}
 	```
-
-
+	
 ![alt text](images/get_started_7.png "")
 
 
