@@ -127,6 +127,11 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 
 3. Add dependcy of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
 
+	```
+	implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}@aars'
+
+	```
+
 	![alt text](images/get_started_13.png "")
 
 
