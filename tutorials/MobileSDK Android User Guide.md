@@ -78,18 +78,18 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 	```
 		allprojects {
     		repositories {
-        	google()
-        	jcenter()
+        		google()
+        		jcenter()
 
-        	maven {
-         	   url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
-        	}
-    }
-}
-	```
+        		maven {
+         	 	  url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
+        		}
+   		 	}
+		}
+		```
 	
 	
-![alt text](images/get_started_4.png "")
+	![alt text](images/get_started_4.png "")
 
 
 2. Add dependcy of MobileSDK to your app level **build.gradle** file.
