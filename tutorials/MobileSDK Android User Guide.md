@@ -146,6 +146,7 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 
 	![alt text](images/get_started_7.png "")
 
+
 ### Use the Mobile SDK in your Android project
 
 Once the library is attached to the Android project, the Mobile SDK can be used by defining the necessary import items.
