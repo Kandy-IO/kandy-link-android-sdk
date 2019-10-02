@@ -5,5 +5,5 @@
   <groupId>com.kandy.mobile</groupId>
   <artifactId>kandylinkmobilesdk</artifactId>
   <version>5.0.0</version>
-  <packaging>pom</packaging>
+  <packaging>aar</packaging>
 </project>
