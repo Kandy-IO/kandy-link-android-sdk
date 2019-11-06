@@ -1,7 +1,7 @@
-# Mobile SDK User Guide for Android
-Version Number: **5.0.0**
+# Kandy Link Android SDK - User Guide
+Version Number: **5.1.0**
 <br>
-Revision Date: **September 30, 2019**
+Revision Date: **November 4, 2019**
 
 ## Mobile SDK overview
 
@@ -44,15 +44,17 @@ This section provides an example of creating your Android project and using the 
 
 ### Create your Android project
 
-The following procedure uses Android Studio IDE to create a simple application which can use MobileSDK.   
+The following procedure uses Android Studio IDE to create a simple application which can use MobileSDK.
 
 1. Open the development environment (in this example, Android Studio).
+
 2. Click **Start a new Android Studio project**.
- ![alt text](images/get_started_1.png "")
- 
+
+![alt text](images/get_started_1.png "")
+
 3. Select an activity or leave as default (Empty Activity) and click **Next**.
 
-	![alt text](images/get_started_2.png "")
+![alt text](images/get_started_2.png "")
 
 4. Fill in the configurations for your project.
 
@@ -64,91 +66,83 @@ The following procedure uses Android Studio IDE to create a simple application w
 
     For the target SDK version, Please check Google suggestion from the [link](https://developer.android.com/distribute/best-practices/develop/target-sdk). Target SDK can be changed on **build.gradle** file after the project creation.
 
-	![alt text](images/get_started_3.png "")
-
+![alt text](images/get_started_3.png "")
 
 ### Adding MobileSDK dependency to your project
 
-There are 2 option to add MobileSDK dependency to your project. You can add MobileSDK dependency from github repository or you can add it your project manually. This document will explain both options in detail. 
+There are 2 option to add MobileSDK dependency to your project. You can add MobileSDK dependency from github repository or you can add it your project manually. This document will explain both options in detail.
 
+#### Adding the dependency from GitHub repository
 
-#### Adding MobileSDK dependency to your project from GitHub repository
-1. Add MobileSDK repository url to your root level **build.gradle** file. 
+1. Add MobileSDK repository url to your root level **build.gradle** file.
 
+```
+allprojects {
+	repositories {
+    google()
+    jcenter()
 
-	```
-	allprojects {
-    	repositories {
-        	google()
-        	jcenter()
+  	maven {
+ 	    url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
+    }
+  }
+}
+```
 
-        	maven {
-         	  url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
-        	}
-   		}
-	}
-	```
-	
 ![alt text](images/get_started_4.png "")
 
 2. Add dependcy of MobileSDK to your app level **build.gradle** file.
 
-	```
-	implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}'
+```
+implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}'
+```
 
-	```
+![alt text](images/get_started_5.png "")
 
-	![alt text](images/get_started_5.png "")
+<div style="border-style:solid; page-break-inside: avoid;">
+<h5>NOTE</h5>
+Check latest version of MobileSDK from <a href="https://github.com/Kandy-IO/kandy-link-android-sdk">GitHub</a>.
+</div>
+<br>
 
-	---
-	**NOTE**
-
-	Check latest version of MobileSDK from [GitHub](https://github.com/Kandy-IO/kandy-link-android-sdk). 
-
-	---
-
-
-#### Adding MobileSDK dependency to your project manually
-
+#### Adding the dependency manually
 
 1. Download latest MobileSDK version from [GitHub](https://github.com/Kandy-IO/kandy-link-android-sdk) and copy **aar** file to your project **lib** folder.
 
- ![alt text](images/get_started_6.png "")
-
+![alt text](images/get_started_6.png "")
 
 2. After that you need to inform gradle that your app will use manual aar files. To do that add **flatDir** path to your root level **build.gradle** file as in the example above.
 
-	```
-	flatDir {
-       dirs 'libs'
-   }
-	```
- ![alt text](images/get_started_12.png "")
+```
+flatDir {
+  dirs 'libs'
+}
+```
+
+![alt text](images/get_started_12.png "")
 
 3. Add dependcy of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
 
-	```
-	implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}@aars'
+```
+implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}@aar'
+```
 
-	```
-
-	![alt text](images/get_started_13.png "")
-
+![alt text](images/get_started_13.png "")
 
 ### Adding Java 8 support
- An Android application project must be compatible with Java 8 when it is using Mobile SDK library. This necessity comes from the WebRTC library, its code is dependent on some Java 8 features. In order to set this compliance, open **build.gradle** file, located under **app** module of **MobileSDKDemoApp** project. Add the configuration script below to the file.
 
-	```	
-	android{
-		compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
-    }
-	}
-	```
-	
+An Android application project must be compatible with Java 8 when it is using Mobile SDK library. This necessity comes from the WebRTC library, its code is dependent on some Java 8 features. In order to set this compliance, open **build.gradle** file, located under **app** module of **MobileSDKDemoApp** project. Add the configuration script below to the file.
+
+```
+android{
+	compileOptions {
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
+  }
+}
+```
+
 ![alt text](images/get_started_7.png "")
-
 
 ### Use the Mobile SDK in your Android project
 
@@ -239,15 +233,16 @@ public void configExample() {
     Configuration configuration = Configuration.getInstance();
     configuration.setUsername("alice@rbbn.com");
     configuration.setPassword("password");
-    configuration.setRestServerIp("rbbn.com/mobilesdkdemoapp");
+    configuration.setRestServerIp("$SUBSCRIPTIONFQDN$");
     configuration.setRestServerPort(443);
     configuration.setRequestHttpProtocol(false);
 
     ICEServers iceServers = new ICEServers();
-    iceServers.addICEServer("stun: rbbn.com/mobilesdkdemoapp:3478");
+    iceServers.addICEServer("$ICESERVER1$");
+    iceServers.addICEServer("$ICESERVER2$");
     configuration.setICEServers(iceServers);
 
-    configuration.setWebSocketServerIp("rbbn.com/mobilesdkdemoapp");
+    configuration.setWebSocketServerIp("$WEBSOCKETFQDN$");
     configuration.setWebSocketServerPort(443);
     configuration.setSecuredWSProtocol(true);
 }
@@ -494,19 +489,19 @@ public class Demo {
         //password for authorization
         configuration.setPassword("password");
         //server IP value for SPiDR/Kandy Link
-        configuration.setRestServerIp("127.0.0.1");
+        configuration.setRestServerIp("$SUBSCRIPTIONFQDN$");
         //server port value for SPiDR/Kandy Link
         configuration.setRestServerPort(443);
 
          //IP used in websocket connection creation
-        configuration.setWebSocketServerIp("127.0.0.1");
+        configuration.setWebSocketServerIp("$WEBSOCKETFQDN$");
         //port used in websocket connection creation
         configuration.setWebSocketServerPort(443);
 
         // SPiDR/Kandy Link TURN server using udp transport in WebRTC's peer connection
         ICEServers iceServers = new ICEServers();
-        iceServers.addICEServer("turns:turn.spidr.com:443?transport=tcp");
-        iceServers.addICEServer("stun:stun1.spidr.com:3478?transport=udp");
+        iceServers.addICEServer("$ICESERVER1$");
+        iceServers.addICEServer("$ICESERVER2$");
         configuration.setICEServers(iceServers);
     }
 }
@@ -742,11 +737,11 @@ Use the addICEServer(iceServerURL, username, password) method of the ICEServers 
 
 ```java
 ICEServers servers = new ICEServers();
-servers.addICEServer(“stun:stun1.spidr.com:8322”);
+servers.addICEServer("stun:stun1.spidr.com:8322");
 Configuration.getInstance().setICEServers(servers);
 // or
 ICEServers servers = Configuration.getInstance().getICEServers();
-servers.addICEServer(“stun:stun1.spidr.com:8322”);
+servers.addICEServer("stun:stun1.spidr.com:8322");
 ```
 
 <div class="page-break"></div>
@@ -1484,13 +1479,13 @@ public void sendParametersToCall(CallInterface call, Map<String, String> customP
 
 #### Set ICE options
 
-The Configuration class has an “iceOption” attribute used to determine the ICE behavior. The following are the available ICE options:
+The Configuration class has an "iceOption" attribute used to determine the ICE behavior. The following are the available ICE options:
 
 * ICE_TRICKLE: Trickle ICE completes signaling without waiting for candidate collection. Clients send candidates to one another as they’re discovered (after the call signaling is complete and the call is established). This provides faster call setup times but may cause media delays.
 
 * ICE_VANILLA: The default value. The clients must collect and send all candidates before initializing signaling. This process, in addition to the particular network configuration and the number of interfaces in the clients’ devices, can cause call setup delays.
 
-If the “ICE_TRICKLE” option is selected, the “ICECollectionTimeout” value is not used. If the call ends before all ICE candidates are collected, the MobileSDK does not listen to the TURN/STUN server since the peer connection is closed.
+If the "ICE_TRICKLE" option is selected, the "ICECollectionTimeout" value is not used. If the call ends before all ICE candidates are collected, the MobileSDK does not listen to the TURN/STUN server since the peer connection is closed.
 
 <div style="border-style:solid; page-break-inside: avoid;">
 <h5>WARNING</h5>
@@ -1582,7 +1577,9 @@ public void callStatusChanged(CallInterface callInterface, CallState callState) 
 
 The Configuration class has a variable "preferredCodecSet", which is an instance of the CodecSet class. To use only a subset of the available codecs or to change the default priority, the "audioCodecs" and "videoCodecs" arrays of preferredCodecSet must be set. Codecs should be listed in order of priority (i.e. first codec listed is first priority).
 
-If you do not add any codecs to the preferredCodecSet variable or if you create the preferredCodecSet variable with a default constructor, the SDK uses the default codecs in the following priority order:
+If you do not add any codecs to the preferredCodecSet variable, Mobile SDK will use the WebRTC default behavior for codec preference.
+
+If you create the preferredCodecSet variable with a default constructor, the Mobile SDK uses the default codecs in the following priority order:
 
 * Audio Codecs: AC_OPUS, AC_G722, AC_PCMA, AC_PCMU, AC_ISAC, AC_ILBC
 * Video Codecs: VC_VP8, VC_VP9, VC_H264
@@ -1615,7 +1612,7 @@ Using "CodecToReplace" feature of Mobile SDK, applications can manipulate the co
 
 Note that, it is strongly recommended **not** to use this API during an ongoing call operation (e.g. mid-call events). A configuration change will affect the ongoing call and this may cause unstable WebRTC behavior.
 
-For the replacing codec payload number feature, the MobileSDK user have to create an instance of the CodecToReplace model class and set the codecDefinition (the definition of the codec that can be seen on the rtpmap in SDP, e.g. “telephone-event/8000” or “opus/48000/2”) and payloadNumber (e.g. “101” or “96” etc.) parameters. After creation of CodecToReplace object(s), they should be set to Mobile SDK through `setReplaceCodecSet` API on `Configuration` class.
+For the replacing codec payload number feature, the MobileSDK user have to create an instance of the CodecToReplace model class and set the codecDefinition (the definition of the codec that can be seen on the rtpmap in SDP, e.g. "telephone-event/8000" or "opus/48000/2") and payloadNumber (e.g. "101" or "96" etc.) parameters. After creation of CodecToReplace object(s), they should be set to Mobile SDK through `setReplaceCodecSet` API on `Configuration` class.
 
 After the Mobile SDK user set the ReplaceCodecSet configuration, all of the local offer call SDPs will be generated with the specified codec payload numbers and there will be no modification done on remote SDPs and local answer SDPs.
 
@@ -1636,14 +1633,14 @@ After the Mobile SDK user set the ReplaceCodecSet configuration, all of the loca
 try {
   List<CodecToReplace> codecsToReplace = new ArrayList<>();
 
-  codecsToReplace.add(CodecToReplace.create(“telephone-event/8000”, “101”));
-  codecsToReplace.add(CodecToReplace.create(“opus/48000/2”, “114”));
-  codecsToReplace.add(CodecToReplace.create(“VP8/90000”, “100”));
+  codecsToReplace.add(CodecToReplace.create("telephone-event/8000", "101"));
+  codecsToReplace.add(CodecToReplace.create("opus/48000/2", "114"));
+  codecsToReplace.add(CodecToReplace.create("VP8/90000", "100"));
 
   Map<String, String> customProperties = new HashMap<>();
-  customProperties.put(“profile-level-id”, “42e01f”);
-  customProperties.put(“packetization-mode”, “1”);
-  codecsToReplace.add(CodecToReplace.create(“H264/90000”, “120”, customProperties));
+  customProperties.put("profile-level-id", "42e01f");
+  customProperties.put("packetization-mode", "1");
+  codecsToReplace.add(CodecToReplace.create("H264/90000", "120", customProperties));
 
   Configuration.getInstance().setReplaceCodecSet(codecsToReplace);
 } catch (MobileException ex) {
@@ -1742,7 +1739,7 @@ a=rtpmap:106 ulpfec/90000
 …
 ```
 
- * A simple replacement as <”opus/48000/2”, “114”> and <”telephone-event/48000”, “101”> :
+ * A simple replacement as <"opus/48000/2", "114"> and <"telephone-event/48000", "101"> :
 
 ```
 …
@@ -1831,7 +1828,7 @@ a=rtpmap:106 ulpfec/90000
 …
 ```
 
- * For H264, there are 2 codecs with the same description, so another property should be introduced for comparison in order to define which one to replace. So replacement should be defined as <”H264/90000”, “126”, “profile-level-id=42e029”>:
+ * For H264, there are 2 codecs with the same description, so another property should be introduced for comparison in order to define which one to replace. So replacement should be defined as <"H264/90000", "126", "profile-level-id=42e029">:
 
 ```
 …
@@ -1919,7 +1916,7 @@ a=fmtp:124 apt=104
 a=rtpmap:106 ulpfec/90000
 ```
 
- * If <”opus/48000/2”, “105”> provided through this configuration, there will be a conflict with “CN/16000” in the original SDP. In this case Mobile SDK will swap the payload numbers of these codecs as follows:
+ * If <"opus/48000/2", "105"> provided through this configuration, there will be a conflict with "CN/16000" in the original SDP. In this case Mobile SDK will swap the payload numbers of these codecs as follows:
 
 ```
 …
@@ -2173,8 +2170,8 @@ Use the `callAdditionalInfoChanged` callback method in `callApplicationListener`
 | Field  | Description                                                   |
 |--------|---------------------------------------------------------------|
 | action | The primary category of information                           |
-| type   | The “action” sub-category                                     |
-| callId | The identifier for the related call, which is different than the call session id. This id is either randomly generated by the Mobile SDK or set by the user. <br><br> **Note:** The call identifier is obtained using the “getId” method rather than the “getCallId” method (which would return the call session identifier)  |
+| type   | The "action" sub-category                                     |
+| callId | The identifier for the related call, which is different than the call session id. This id is either randomly generated by the Mobile SDK or set by the user. <br><br> **Note:** The call identifier is obtained using the "getId" method rather than the "getCallId" method (which would return the call session identifier)  |
 | time   | Occurrence time (epoch in milliseconds)                       |
 
 ###### Example: Additional Info
@@ -2188,9 +2185,9 @@ Use the `callAdditionalInfoChanged` callback method in `callApplicationListener`
 }
 ```
 
-The following list shows each available “action” category and its “type” sub-category:
+The following list shows each available "action" category and its "type" sub-category:
 
-* **iceTimeout:** Includes types for ICE collection timeout (assuming “2x” is the timeout configuration and “t” is when the ICE process ended)
+* **iceTimeout:** Includes types for ICE collection timeout (assuming "2x" is the timeout configuration and "t" is when the ICE process ended)
   * **iceNormal:** Time when the ICE collection process ended normally (period of t<x)
   * **iceOneRelay:** Time when the ICE collection process was interrupted by a timeout with at least one (audio and video) relay candidate (period of x<t<2x)
   * **iceNoRelay:** Time when the ICE collection process was interrupted by a timeout without a relay candidate (period of t=2x)
@@ -2614,7 +2611,7 @@ public class Demo {
         //password for authorization
         configuration.setPassword("password");
         //server IP value for SPiDR
-        configuration.setRestServerIp("127.0.0.1");
+        configuration.setRestServerIp("$SUBSCRIPTIONFQDN$");
         //server port value for SPiDR
         configuration.setRestServerPort(443);
         //logger implementation defined by the application
@@ -2625,7 +2622,7 @@ public class Demo {
         //connection type for notification
         configuration.setNotificationType(NotificationType.WebSocket);
          //IP used in websocket connection creation
-        configuration.setWebSocketServerIp("127.0.0.1");
+        configuration.setWebSocketServerIp("$WEBSOCKETFQDN$");
         //port used in websocket connection creation
         configuration.setWebSocketServerPort(443);
         //set to WS or WSS protocol
@@ -2633,12 +2630,8 @@ public class Demo {
 
         // SPiDR/Kandy Link TURN server in WebRTC's peer connection
         ICEServers iceServers = new ICEServers();
-        iceServers.addICEServer("turns:turn.spidr.com:443?transport=tcp");
-        iceServers.addICEServer("turns:turn2.spidr.com:443?transport=tcp");
-
-        // Adding SPiDR/Kandy Link STUN server
-        iceServers.addICEServer("stun:stun1.spidr.com:3478?transport=udp");
-        iceServers.addICEServer("stun:turn2.spidr.com:3478?transport=udp");
+        iceServers.addICEServer("$ICESERVER1$");
+        iceServers.addICEServer("$ICESERVER2$");
 
         configuration.setICEServers(iceServers);
 

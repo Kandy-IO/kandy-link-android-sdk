@@ -5,19 +5,20 @@ Kandy Link Android SDK change log.
 - This project adheres to [Semantic Versioning](http://semver.org/).
 - This change log follows [keepachangelog.com](http://keepachangelog.com/) recommendations.
 
-## 5.0.0 - 2019-10-03
+## 5.1.0 - 2019-11-04
+
+### Fixed
+- Default value for codec preferrence is set to reflect WebRTC default codec behavior `KAE-538`
+
+
+## 5.0.0 - 2019-10-03
 
 ### Added
-
 - Unified Plan Support `KAE-200`
 - Mobile SDK Distribution on Maven `KAE-425`
 - Support Custom SIP headers in Incoming Call `KAE-447`
 - Callee Name api added to CallInterface `KAE-475`
-- Support account id `KAE-491`
 
-### Fixed
-- Unified Plan Interoperability Issues `KAE-494`
-- After one swap, swap function can not work `KAE-410`
 
 ## 4.6.2 - 2019-09-02
 

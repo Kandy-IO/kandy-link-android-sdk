@@ -12,7 +12,7 @@ allprojects {
    	 ...
       	 maven {
        	     url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
-      	  }   
+      	  }
    	 ...
   	}
 }
@@ -46,4 +46,4 @@ The information about tutorials and documents can be found in the links below
 
 * `Documents`: [API Docs](https://kandy-io.github.io/kandy-link-android-sdk/docs)
 
-* `Tutorials`: [User Guide](https://kandy-io.github.io/kandy-link-android-sdk/tutorials/)
+* `Tutorials`: Choose your configuration ( [Kandy-US](https://kandy-io.github.io/kandy-link-android-sdk/tutorials/?SUBSCRIPTIONFQDN=spidr-ucc.genband.com&WEBSOCKETFQDN=spidr-ucc.genband.com&ICESERVER1=turns:turn-ucc-1.genband.com:443?transport=tcp&ICESERVER2=turns:turn-ucc-2.genband.com:443?transport=tcp) | [Kandy-EMEA](https://kandy-io.github.io/kandy-link-android-sdk/tutorials/?SUBSCRIPTIONFQDN=spidr-em.genband.com&WEBSOCKETFQDN=spidr-em.genband.com&ICESERVER1=turns:turn-em-1.genband.com:443?transport=tcp&ICESERVER2=turns:turn-em-2.genband.com:443?transport=tcp) )
