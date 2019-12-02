@@ -1,36 +1,43 @@
 # Kandy Link Android SDK
 
 ## Installation
-To integrate Kandy Link Android SDK to your project add gradle dependencies as described in above.
+To integrate Kandy Link Android SDK to your project add gradle dependencies as described below.
 
 ### Step 1
-Add Kandy Link SDK Maven url to your root level `build.gradle` file.
+Add Kandy Link Android SDK maven repository url to your root level `build.gradle` file.
 
 ```
 allprojects {
-   	repositories {
-   	 ...
-      	 maven {
-       	     url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
-      	  }
-   	 ...
-  	}
+  ...
+  repositories {
+    ...
+    maven {
+      url "https://raw.githubusercontent.com/Kandy-IO/kandy-link-android-sdk/master/dist/"
+    }
+  }
 }
 ```
 
 ### Step 2
-Add dependcy of Kandy Link Android SDK to your app level `build.gradle` file.
+Add dependency of Kandy Link Android SDK to your app level `build.gradle` file.
 
 ```
-implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}'
+implementation 'com.kandy.mobile:kandylinkmobilesdk:5.2.0'
 ```
 
 That's all! You can use Kandy Link Android SDK after you sync gradle.
+
+## Installation for versions before 5.0.0
+Versions before 5.0.0 will require manual installation. To download an older version, switch to tag of that specific version. Then download the MobileSDK-4.x.x.zip file under "dist" directory.
 
 ## Compatibility
 Compatible Android OS versions :
 
 * Android 4.1+ - Android 10.0
+
+Tested on :
+
+* Nexus 5, Samsung Note 3, Samsung Note 5, Samsung S7, LG G2, LG G3, LG G5, LG G6, HTC Desire 626, HTC One A9, HTC 10, SONY XPERIA Z5, SONY XPERIA XZ, General Mobile GM 5+
 
 Compatible KandyLink Server versions :
 

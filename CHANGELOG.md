@@ -5,6 +5,16 @@ Kandy Link Android SDK change log.
 - This project adheres to [Semantic Versioning](http://semver.org/).
 - This change log follows [keepachangelog.com](http://keepachangelog.com/) recommendations.
 
+## 5.2.0 - 2019-12-02
+
+### Added
+- WebRTC stack upgraded to version M78 `KAE-507`
+- Custom Kandy Agent HTTP Header is implemented `KAE-524`
+
+### Deprecated
+- `CallService.createOutgoingCall(String, CallApplicationListener, OutgoingCallCreateInterface)`, `CallService.createOutgoingCall(String, String, CallApplicationListener, OutgoingCallCreateInterface)`, `CallService.createOutgoingCall(String, String, String, CallApplicationListener, OutgoingCallCreateInterface)` and `CallService.createThreeWayCall(String, String, CallApplicationListener, OutgoingCallCreateInterface)` methods are deprecated and will be removed in future releases, since `CallApplicationListener` can already be set to CallService via a setter method. Instead `CallService.createOutgoingCall(String, OutgoingCallCreationCallback)`, `CallService.createOutgoingCall(String, String, OutgoingCallCreationCallback)`, `CallService.createOutgoingCall(String, String, String, OutgoingCallCreateInterface)` and `CallService.createThreeWayCall(String, String, OutgoingCallCreateInterface)` should be used.
+
+
 ## 5.1.0 - 2019-11-04
 
 ### Fixed

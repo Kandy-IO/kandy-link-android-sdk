@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
-Version Number: **5.1.0**
+Version Number: **5.2.0**
 <br>
-Revision Date: **November 4, 2019**
+Revision Date: **December 2, 2019**
 
 ## Mobile SDK overview
 
@@ -312,7 +312,7 @@ registrationService.registerToServer(subscribeServices, 3600, new OnCompletionLi
         } catch (MobileException exception) {
         }
         callService.createOutgoingCall("alice@rbbn.com", "bob@rbbn.com",
-                MainActivity.this, new OutgoingCallCreateInterface() {
+                new OutgoingCallCreateInterface() {
                     @Override
                     public void callCreated(OutgoingCallInterface callInterface) {
                         call = callInterface;
@@ -785,7 +785,7 @@ public void callExample() {
     VideoView localVideoView  = (VideoView)findViewById(R.id.localVideoView);
     VideoView remoteVideoView = (VideoView)findViewById(R.id.remoteVideoView);
 
-    callService.createOutgoingCall(terminatorAddress, this, new OutgoingCallCreateInterface()
+    callService.createOutgoingCall(terminatorAddress, new OutgoingCallCreateInterface()
     {
         @Override
         public void callCreated(OutgoingCallInterface callInterface) {
@@ -1203,7 +1203,7 @@ Two different calls can be combined into a three-way call (ad-hoc conference). E
 ```java
 public void threewayCallExample(CallInterface call1, CallInterface call2) {
   callService.createThreeWayCall(call1, call2,
-      CallActivity.this, new OutgoingCallCreateInterface() {
+      new OutgoingCallCreateInterface() {
         @Override
         public void callCreated(OutgoingCallInterface callInteface) {
           callInteface.establishAudioCall();
@@ -1444,7 +1444,7 @@ If desired, custom SIP Headers can be send while initiating call and/or during t
 
 ```java
 public void callWithCustomHeadersExample(String terminatorAddress, boolean videoEnabled, Map<String, String> customParameters) {
-    callService.createOutgoingCall(terminatorAddress, this, new OutgoingCallCreateInterface()
+    callService.createOutgoingCall(terminatorAddress, new OutgoingCallCreateInterface()
     {
         @Override
         public void callCreated(OutgoingCallInterface callInterface) {
