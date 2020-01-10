@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
-Version Number: **5.2.0**
+Version Number: **5.3.0**
 <br>
-Revision Date: **December 2, 2019**
+Revision Date: **January 9, 2020**
 
 ## Mobile SDK overview
 
@@ -822,7 +822,7 @@ public void establishCallFailed(OutgoingCallInterface outgoingCall, MobileError 
 
 #### Receive an incoming call
 
-When incoming call received from SPiDR/Kandy Link, `CallApplicationListener` will be notified via `incomingCall` method. Incoming call can be accepted, rejected or ignored. When call is ignored, listener will not be notified about that call anymore. If incoming call will be accepted, `localVideoView` and `remoteVideoView` should be assigned to related views.
+When incoming call received from SPiDR/Kandy Link, `CallApplicationListener` will be notified via `incomingCall` method. Incoming call can be accepted, rejected, ignored or forwarded to another user. When call is ignored, listener will not be notified about that call anymore. If incoming call will be accepted, `localVideoView` and `remoteVideoView` should be assigned to related views.
 
 ###### Example: Accepting incoming call
 
@@ -897,6 +897,31 @@ public void ignoreSucceed(IncomingCallInterface incomingCall) {
 public void ignoreFailed(IncomingCallInterface incomingCall, MobileError error) {
   //called when ignore call fails
   Log.e("Call", "ignore call failed : " + error.getErrorMessage());
+}
+```
+
+###### Example: Forwarding the incoming call
+
+```java
+@Override
+public void incomingCall(IncomingCallInterface incomingCall) {
+
+  // To forward the call
+
+  String targetAddress = // address of the user to whom the call is forwarded
+  incomingCall.forwardCall(targetAddress);
+}
+
+@Override
+public void forwardCallSucceeded(IncomingCallInterface incomingCall) {
+  //called when forward call succeeds
+  Log.i("Call", "forward call is OK");
+}
+
+@Override
+public void forwardCallFailed(IncomingCallInterface incomingCall, MobileError error) {
+  //called when forward call fails
+  Log.e("Call", "forward call failed : " + error.getErrorMessage());
 }
 ```
 
@@ -977,6 +1002,7 @@ The following Mobile SDK-call specific status codes are mapped to ENDED in CallS
 | 9905       | SESSION_COMPLETED             | Transfer completed, transferer left the call |
 | 9906       | ENDED_BY_ERROR                | Call ended due to error                      |
 | 9907       | ENDED_BY_UNREGISTER           | Call ended due to unregistration             |
+| 9908       | CALL_FORWARDED           | Local user forwarded the call    |
 
 Other SIP-specific sessionParam statusCode values mapped to ENDED (e.g. statusCode 480, equivalent to previous NOT_AVAILABLE) are forwarded directly to the application layer.
 

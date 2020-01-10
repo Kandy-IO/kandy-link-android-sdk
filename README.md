@@ -1,5 +1,9 @@
 # Kandy Link Android SDK
 
+<p>
+    <img alt="GitHub release" src="https://img.shields.io/github/v/release/kandy-io/kandy-link-android-sdk">
+</p>
+
 ## Installation
 To integrate Kandy Link Android SDK to your project add gradle dependencies as described below.
 
@@ -22,7 +26,7 @@ allprojects {
 Add dependency of Kandy Link Android SDK to your app level `build.gradle` file.
 
 ```
-implementation 'com.kandy.mobile:kandylinkmobilesdk:5.2.0'
+implementation 'com.kandy.mobile:kandylinkmobilesdk:5.3.0'
 ```
 
 That's all! You can use Kandy Link Android SDK after you sync gradle.
