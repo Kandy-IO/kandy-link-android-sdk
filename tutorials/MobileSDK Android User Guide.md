@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
-Version Number: **5.5.0**
+Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **March 30, 2020**
+Revision Date: **May 4, 2020**
 
 ## Mobile SDK overview
 
@@ -94,7 +94,7 @@ allprojects {
 2. Add dependcy of MobileSDK to your app level **build.gradle** file.
 
 ```
-implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}'
+implementation 'com.kandy.mobile:kandylinkmobilesdk:{$SDK_VERSION$}'
 ```
 
 ![alt text](images/get_started_5.png "")
@@ -107,7 +107,7 @@ Check latest version of MobileSDK from <a href="https://github.com/Kandy-IO/kand
 
 #### Adding the dependency manually
 
-1. Download latest MobileSDK version from [GitHub](https://github.com/Kandy-IO/kandy-link-android-sdk) and copy **aar** file to your project **lib** folder.
+1. Download latest MobileSDK version from [GitHub](https://github.com/Kandy-IO/kandy-link-android-sdk/tree/$SDK_VERSION$/dist/com/kandy/mobile/kandylinkmobilesdk/$SDK_VERSION$) and copy **aar** file to your project **lib** folder.
 
 ![alt text](images/get_started_6.png "")
 
@@ -124,7 +124,7 @@ flatDir {
 3. Add dependcy of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
 
 ```
-implementation 'com.kandy.mobile:kandylinkmobilesdk:{version}@aar'
+implementation 'com.kandy.mobile:kandylinkmobilesdk:{$SDK_VERSION$}@aar'
 ```
 
 ![alt text](images/get_started_13.png "")
