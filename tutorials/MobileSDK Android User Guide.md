@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **May 4, 2020**
+Revision Date: **June 12, 2020**
 
 ## Mobile SDK overview
 
@@ -76,7 +76,7 @@ There are 2 option to add MobileSDK dependency to your project. You can add Mobi
 
 1. Add MobileSDK repository url to your root level **build.gradle** file.
 
-```
+```groovy
 allprojects {
 	repositories {
     google()
@@ -93,17 +93,16 @@ allprojects {
 
 2. Add dependcy of MobileSDK to your app level **build.gradle** file.
 
-```
+```groovy
 implementation 'com.kandy.mobile:kandylinkmobilesdk:{$SDK_VERSION$}'
 ```
 
 ![alt text](images/get_started_5.png "")
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>NOTE</h5>
 Check latest version of MobileSDK from <a href="https://github.com/Kandy-IO/kandy-link-android-sdk">GitHub</a>.
-</div>
-<br>
+<hr/>
 
 #### Adding the dependency manually
 
@@ -113,27 +112,27 @@ Check latest version of MobileSDK from <a href="https://github.com/Kandy-IO/kand
 
 2. After that you need to inform gradle that your app will use manual aar files. To do that add **flatDir** path to your root level **build.gradle** file as in the example above.
 
-```
+```groovy
 flatDir {
   dirs 'libs'
 }
 ```
 
-![alt text](images/get_started_12.png "")
+![alt text](images/get_started_7.png "")
 
 3. Add dependcy of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
 
-```
+```groovy
 implementation 'com.kandy.mobile:kandylinkmobilesdk:{$SDK_VERSION$}@aar'
 ```
 
-![alt text](images/get_started_13.png "")
+![alt text](images/get_started_8.png "")
 
 ### Adding Java 8 support
 
 An Android application project must be compatible with Java 8 when it is using Mobile SDK library. This necessity comes from the WebRTC library, its code is dependent on some Java 8 features. In order to set this compliance, open **build.gradle** file, located under **app** module of **MobileSDKDemoApp** project. Add the configuration script below to the file.
 
-```
+```groovy
 android{
 	compileOptions {
     targetCompatibility 1.8
@@ -142,7 +141,7 @@ android{
 }
 ```
 
-![alt text](images/get_started_7.png "")
+![alt text](images/get_started_9.png "")
 
 ### Use the Mobile SDK in your Android project
 
@@ -152,25 +151,31 @@ The following is an example using the Mobile SDK in Android:
 
 1. Locate and open **AndroidManifest.xml**.
 
-![alt text](images/get_started_8.png "")
+![alt text](images/get_started_10.png "")
 
-2. Add the following permissions to the manifest file:
+2. Add the following permissions to the manifest file like that sample:
 
 ```xml
-<uses-feature android:glEsVersion="0x00020000" android:required="true" />
-<uses-feature android:name="android.hardware.camera" />
-<uses-feature android:name="android.hardware.camera.autofocus" />
+<manifest xlmns:android...>
+    ...
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-<uses-permission android:name="android.permission.RECORD_AUDIO" />
-<uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <application ...>
+        ...
+    </application>
+</manifest>
 ```
 
 3. In your project folder, navigate to **res** > **layout** and open **activity_main.xml** to create your UI.
 
-![alt text](images/get_started_9.png "")
+![alt text](images/get_started_11.png "")
 
 4. You can create your UI in a graphical mode (if available) or in xml editor mode. In this example, editing will be done in the xml view.
 
@@ -211,9 +216,13 @@ The following is an example using the Mobile SDK in Android:
 </LinearLayout>
 ```
 
-![alt text](images/get_started_10.png "")
+![alt text](images/get_started_12.png "")
 
 6. Open the MainActivity. If project has no activity, create one.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public class MainActivity extends Activity {
@@ -225,8 +234,13 @@ public class MainActivity extends Activity {
     }
 }
 ```
+<!-- tabs:end -->
 
 7. Define the configuration attributes.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void configExample() {
@@ -249,8 +263,13 @@ public void configExample() {
     configuration.setSecuredWSProtocol(true);
 }
 ```
+<!-- tabs:end -->
 
 8. Define a register() method to provide client registration by calling the registration and registration notification methods.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void register() {
@@ -294,14 +313,24 @@ public void register() {
     });
 }
 ```
+<!-- tabs:end -->
 
 9. Define a global variable call.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 CallInterface call;
 ```
+<!-- tabs:end -->
 
 10. Implement onSuccess() method of OnCompleteListener so that an outgoing call will be triggered after a successful registration.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 registrationService.registerToServer(subscribeServices, 3600, new OnCompletionListener() {
@@ -337,10 +366,15 @@ registrationService.registerToServer(subscribeServices, 3600, new OnCompletionLi
     }
 });
 ```
+<!-- tabs:end -->
 
 11. The Call service uses callbacks to publish response events. To receive callbacks, a class must implement the necessary interface.
 
   Modify the activity class to implement the interface.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public class MainActivity extends Activity
@@ -352,8 +386,13 @@ public class MainActivity extends Activity
 
 }
 ```
+<!-- tabs:end -->
 
 12. Bind the register() method with the start video button.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 Button startCall = (Button) findViewById(R.id.startVideoButton);
@@ -364,8 +403,13 @@ startCall.setOnClickListener(new View.OnClickListener() {
     }
 });
 ```
+<!-- tabs:end -->
 
 13. Define stopCall() method.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void stopCall() throws MobileException {
@@ -374,8 +418,13 @@ public void stopCall() throws MobileException {
     }
 }
 ```
+<!-- tabs:end -->
 
 14. Override the endCallSucceeded() callback method so that an unregister operation is triggered when the call ends.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -395,8 +444,13 @@ public void endCallSucceeded(CallInterface call) {
     });
 }
 ```
+<!-- tabs:end -->
 
 15. Bind the stopCall method with the stop video button.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 Button stopCall = (Button) findViewById(R.id.stopVideoButton);
@@ -411,10 +465,11 @@ stopCall.setOnClickListener(new View.OnClickListener() {
     }
 });
 ```
+<!-- tabs:end -->
 
 16. Run the demo application.
 
-![alt text](images/get_started_11.png "")
+![alt text](images/get_started_13.png "")
 
 <div class="page-break"></div>
 
@@ -423,6 +478,10 @@ stopCall.setOnClickListener(new View.OnClickListener() {
 The application must support background processing while on an active call, allowing SDK to process WebSocket operations even after the user presses the Home button, the Sleep/Wake button, or if another application is launched. Implement triggers for related activities (e.g. video call) to respond to Android's activity life-cycle events (e.g. pause/resume).
 
 ###### Example: Implement triggers for background processing
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -439,18 +498,23 @@ protected void onResume()
     SDKEventManager.handleEvent(SDKEvents.EVENT_FOREGROUND);
 }
 ```
+<!-- tabs:end -->
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>WARNING</h5>
 Android may kill an activity under certain conditions (e.g while the application or activity is in the background).
 This behavior causes VideoView objects to be disposed; Therefore, both local and remote VideoView objects must be set again when activity resumes from the background.
 <br/><br/>
 If there is more than one call object, video views must be set again for each of the call objects.
-</div>
+<hr/>
 
 Use the onResume function to set all video views.
 
 ###### Example: Set all views
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -464,6 +528,7 @@ protected void onResume()
     call2.setRemoteVideoView((VideoView)findViewById(R.id.remoteVideoView2));
 }
 ```
+<!-- tabs:end -->
 
 <div class="page-break"></div>
 
@@ -476,6 +541,10 @@ To see all available configurations, see [Appendix D: Detailed Configurations](#
 <div class="page-break"></div>
 
 ###### Example: Accessing and updating Configuration
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public class Demo {
@@ -510,6 +579,7 @@ public class Demo {
     }
 }
 ```
+<!-- tabs:end -->
 
 ### Set up logging functionality
 
@@ -525,6 +595,10 @@ The Mobile SDK supports the following log levels:
 * TRACE_WEBRTC
 
 ###### Example: Define logger
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public class LogUtilityExample implements LoggingInterface {
@@ -543,8 +617,13 @@ public class LogUtilityExample implements LoggingInterface {
     }
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Initialize logger
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void initializeAndUseLogger() {
@@ -552,6 +631,7 @@ public void initializeAndUseLogger() {
 	LogManager.log(LogLevel.INFO, "Test", "logger is initialized");
 }
 ```
+<!-- tabs:end -->
 
 <div class="page-break"></div>
 
@@ -569,6 +649,10 @@ The registration service renews registration according to the expiration time wi
 
 
 ###### Example: Registering to SPiDR/Kandy Link
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 RegistrationApplicationListener registrationListener = new RegistrationApplicationListener() {
@@ -606,12 +690,17 @@ registrationService.registerToServer(subscribeServices, 3600,
     }
 });
 ```
+<!-- tabs:end -->
 
 ### Unregister the client
 
 Use the unregisterFromServer method to unregister the client from the server. Failure and success calls are transmitted by the `OnCompletionListener` interface, which can be null. After the client is unregistered, the notification state is "DISCONNECTED", and the registered state is "UNREGISTERED".
 
 ###### Example: Unregistering from SPiDR/Kandy Link
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 RegistrationApplicationListener registrationListener = new RegistrationApplicationListener() {
@@ -640,6 +729,7 @@ registrationService.unregisterFromServer(new OnCompletionListener() {
     }
 });
 ```
+<!-- tabs:end -->
 
 <div class="page-break"></div>
 
@@ -649,8 +739,11 @@ If client wants to register with using "Authorization Name", `authorizationName`
 
 ###### Example: Registering with using Authorization Name
 
-```java
+<!-- tabs:start -->
 
+#### ** Java Code **
+
+```java
 final RegistrationService registrationService
          = ServiceProvider.getInstance(getApplicationContext()).getRegistrationService();
 
@@ -678,6 +771,7 @@ registrationService.registerToServer(subscribeServices, 3600,
     }
 });
 ```
+<!-- tabs:end -->
 
 <div class="page-break"></div>
 
@@ -695,6 +789,10 @@ Incoming calls pass to the third-party app by the notification mechanism. Both i
 
 ###### Example: Setting Call Application Listener
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 public class CallActivity extends Activity implements RegistrationApplicationListener, CallApplicationListener {
 
@@ -706,6 +804,7 @@ public class CallActivity extends Activity implements RegistrationApplicationLis
   }
 }
 ```
+<!-- tabs:end -->
 
 #### Add STUN/TURN servers
 
@@ -721,15 +820,20 @@ The following code sample will request TURN server credentials from SPiDR/Kandy 
 
 ###### Example: Adding STUN/TURN server
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 ICEServers servers = new ICEServers();
-servers.addICEServer("turns:turn1.spidr.com:443?transport=tcp");
-servers.addICEServer("stun:turn1.spidr.com:3478?transport=udp");
-servers.addICEServer("turns:turn2.spidr.com:443?transport=tcp");
-servers.addICEServer("stun:turn2.spidr.com:3478?transport=udp");
+servers.addICEServer("$TURNSERVER1$");
+servers.addICEServer("$TURNSERVER2$");
+servers.addICEServer("$STUNSERVER1$");
+servers.addICEServer("$STUNSERVER2$");
 
 Configuration.getInstance().setICEServers(servers);
 ```
+<!-- tabs:end -->
 
 ##### Add an external TURN/STUN server
 
@@ -739,27 +843,41 @@ Use the addICEServer(iceServerURL, username, password) method of the ICEServers 
 
 ###### Example: Add a STUN server
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 ICEServers servers = new ICEServers();
-servers.addICEServer("stun:stun1.spidr.com:8322");
+servers.addICEServer("$STUNSERVER1$");
 Configuration.getInstance().setICEServers(servers);
 // or
 ICEServers servers = Configuration.getInstance().getICEServers();
-servers.addICEServer("stun:stun1.spidr.com:8322");
+servers.addICEServer("$STUNSERVER1$");
 ```
+<!-- tabs:end -->
 
 <div class="page-break"></div>
 
 ###### Example: Add a TURN server
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 ICEServers servers = Configuration.getInstance().getICEServers();
-servers.addICEServer("turns:turn1.spidr.com:443?transport=tcp", "username", "password");
-servers.addICEServer("turns:turn2.spidr.com:443?transport=tcp", "username", "password");
-servers.addICEServer("turns:turn3.spidr.com:443?transport=tcp", "username", "password");
+servers.addICEServer("$TURNSERVER1$", "username", "password");
+servers.addICEServer("$TURNSERVER2$", "username", "password");
+servers.addICEServer("$TURNSERVER2$", "username", "password");
 ```
+<!-- tabs:end -->
 
 ###### Example: Get the server(s)
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 ICEServers iceServers = Configuration.getInstance().getICEServers();
@@ -770,6 +888,7 @@ String urlOfFirst   = serversArray.getFirst().getUrl();
 String userOfFirst = serversArray.getFirst().getUsername();
 String passOfFirst = serversArray.getFirst().getPassword();
 ```
+<!-- tabs:end -->
 
 If a server URL is entered multiple times, the last username and password will be used for the specified server. To remove a server, you must dispose the existing one and create a new instance, defining necessary servers again.
 
@@ -780,6 +899,10 @@ If a server URL is entered multiple times, the last username and password will b
 Use the `createOutgoingCall` functionality to place audio only or audio/video calls. The MobileSDK also supports establishing calls with only one m line (audio only) or with two m lines (audio and video or one sendrecv/sendonly audio and one recvonly video m line). The number of m lines in the response should match the number of m lines in the initial offer.
 
 ###### Example: Establishing an outgoing call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void callExample() {
@@ -823,12 +946,17 @@ public void establishCallFailed(OutgoingCallInterface outgoingCall, MobileError 
     Log.e("Call", "establish call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 #### Receive an incoming call
 
 When incoming call received from SPiDR/Kandy Link, `CallApplicationListener` will be notified via `incomingCall` method. Incoming call can be accepted, rejected, ignored or forwarded to another user. When call is ignored, listener will not be notified about that call anymore. If incoming call will be accepted, `localVideoView` and `remoteVideoView` should be assigned to related views.
 
 ###### Example: Accepting incoming call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -866,8 +994,13 @@ public void acceptCallFailed(IncomingCallInterface incomingCall, MobileError err
   Log.e("Call", "accept call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Rejecting and ignoring the incoming call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -903,8 +1036,13 @@ public void ignoreFailed(IncomingCallInterface incomingCall, MobileError error) 
   Log.e("Call", "ignore call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Forwarding the incoming call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -928,6 +1066,7 @@ public void forwardCallFailed(IncomingCallInterface incomingCall, MobileError er
   Log.e("Call", "forward call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 #### End the call
 
@@ -936,6 +1075,10 @@ Use the End Call functionality to stop the current call. Call can be ended with 
 **Note:** End Call is applicable to established or answered incoming/outgoing calls and to outgoing calls which are in ringing state. To end the incoming call when ringing state, use `rejectCall`.
 
 ###### Example: Ending a call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void endCallExample() {
@@ -955,6 +1098,7 @@ public void endCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "end call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 #### End call with reason
 
@@ -963,11 +1107,20 @@ If the call end reason string length exceeds the character limitation defined in
 
 ###### Example: End call with reason
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 call.endCall("Reason"); // ends the call with reason
 ```
+<!-- tabs:end -->
 
 ###### Example: Receiving end call notification with reason
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -977,6 +1130,7 @@ public void callStatusChanged(CallInterface callInterface, CallState callState) 
     }
 }
 ```
+<!-- tabs:end -->
 
 #### Supported call end reasons
 
@@ -1012,13 +1166,22 @@ Other SIP-specific sessionParam statusCode values mapped to ENDED (e.g. statusCo
 
 ##### CallState class fields
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 private Type type;
 private int statusCode;
 private String reason;
 ```
+<!-- tabs:end -->
 
 ###### Example: Getting call end reason
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -1059,6 +1222,7 @@ public void callStatusChanged(CallInterface callInterface, CallState callState);
   }
 }
 ```
+<!-- tabs:end -->
 
 #### Get active call list
 
@@ -1066,9 +1230,14 @@ Use the following API to get a pointer to the list of active call objects (i.e. 
 
 ###### Example: Getting active calls
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 ImmutableList callList = callService.getActiveCalls();
 ```
+<!-- tabs:end -->
 
 #### Mid-Call operations
 
@@ -1081,6 +1250,10 @@ See [Appendix B: Call state transitions](#appendix-b-call-state-transitions), fo
 To stop sending audio from the microphone, mute method can be called. Until unmuting the call, participants cannot hear the voice from the device.
 
 ###### Example: Mute/unmute the call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void muteUnmuteExample() {
@@ -1115,12 +1288,17 @@ public void unMuteCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "unmute call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 ##### Video Start/Stop on a Call
 
 To start/stop sending video from the camera, video start/stop method can be called. Note that, these operations take some time, thus listening operation results from `CallApplicationListener`, and acting accordingly is recommended.
 
 ###### Example: Video Start/Stop
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void videoStartStopExample() {
@@ -1155,6 +1333,7 @@ public void videoStopFailed(CallInterface call, MobileError error) {
   Log.e("Call", "video stop failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 ##### Hold/Unhold Call and Double Hold
 While in a call, a participant may be placed on hold by calling `holdCall` method. When operation succeeds, media transfer between participants stops, and call state will change to `ON_HOLD` state. Remote participant will see this call session in `REMOTELY_HELD` state.
@@ -1170,6 +1349,10 @@ Users may also place one another on hold at the same time (Double Hold). The fol
 For more information about call states, see [Appendix B: Call state transitions](#appendix-b-call-state-transitions).
 
 ###### Example: Hold/unhold the call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void holdUnholdExample() {
@@ -1205,10 +1388,15 @@ public void unHoldCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "unhold call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Hold/unhold callback information
 
 When remote peer holds the call, call status will be changed accordingly.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -1223,12 +1411,17 @@ public void callStatusChanged(CallInterface callInterface, CallState callState);
     }
 }
 ```
+<!-- tabs:end -->
 
 ##### Adhoc conference/3­-way call
 
 Two different calls can be combined into a three-way call (ad-hoc conference). Each user's video and audio is combined as a single stream through a media server. When the three users are on the newly created call, the two previous calls end. Users must be subscribed to the Call service during registration to use this feature.
 
 ###### Example: Merging two calls into Adhoc Conferencing/3­way call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void threewayCallExample(CallInterface call1, CallInterface call2) {
@@ -1258,6 +1451,7 @@ public void joinFailed(CallInterface call, MobileError error) {
   Log.e("Call", "Threeway call failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 ##### Blind transfer
 
@@ -1270,6 +1464,10 @@ The Mobile SDK will provide a callback to the application layer to advise whethe
 When call is transferred, transfferer will leave the call.
 
 ###### Example: Blind transfer
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void blindTransferExample(CallInterface call) {
@@ -1289,6 +1487,7 @@ public void transferCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "Transfer failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 When the callee receives the call notification, they may use the getCallerAddress method to receive the name of the person being transferred to them. Once the callee accepts the call, the transferred user may use the getCalleeAddress method to get the name of the person to whom they were transferred.
 
@@ -1299,6 +1498,10 @@ Use `consultativeTransfer` method for transferring current call to the transfer 
 When call is transferred, transferrer will leave the calls.
 
 ###### Example: Consultative transfer
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void consultativeTransferExample(CallInterface call, CallInterface target) {
@@ -1318,6 +1521,7 @@ public void transferCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "Transfer failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 #### Change default camera device (front or back)
 
@@ -1330,6 +1534,10 @@ Call the Configuration class with property "setDefaultCameraMode" to change the 
 
 ###### Example: Change camera device default
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 // To set front camera
 Configuration.getInstance().setDefaultCameraMode(CameraInfo.CAMERA_FACING_FRONT);
@@ -1337,6 +1545,7 @@ Configuration.getInstance().setDefaultCameraMode(CameraInfo.CAMERA_FACING_FRONT)
 // To set back camera
 Configuration.getInstance().setDefaultCameraMode(CameraInfo.CAMERA_FACING_BACK);
 ```
+<!-- tabs:end -->
 
 #### Change camera orientation
 
@@ -1354,6 +1563,10 @@ To change video orientation manually, call rotateCameraOrientationToPosition. Th
 
 ###### Example: Configure camera orientation for incoming and outgoing video
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 public class CallActivity extends Activity {
     @Override
@@ -1366,12 +1579,17 @@ public class CallActivity extends Activity {
     }
 }
 ```
+<!-- tabs:end -->
 
 #### Change local video resolution or camera position
 
 Users can set local video resolution and switch between front and back cameras at any time during the call; there are no call state constraints. Android will return the available video resolutions as a list of the Camera.Size object, which the application can use to set the video resolution. Setting camera position uses the static integer values provided in the Android Camera class (see [Changing default camera device (front or back)](#changing-default-camera-device-front-or-back)).
 
 ###### Example: Changing video resolution and camera position
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void changeVideoResolutionAndPosition (){
@@ -1399,6 +1617,7 @@ public void changeVideoResolutionAndPosition (){
     });
 }
 ```
+<!-- tabs:end -->
 
 #### Send DTMF (Dual-Tone Multi-Frequency) signals
 
@@ -1407,6 +1626,10 @@ The Mobile SDK supports sending Dual-Tone Multi-Frequency (DTMF) signals to an I
 **Note:** This feature only provides the functionality for sending DTMF signals. It does not include the functionality for getting keypad input or for playing key press volume.
 
 ###### API definition for sending DTMF
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public interface CallInterface {
@@ -1421,14 +1644,20 @@ public interface CallInterface {
 
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Sending DTMF
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void sendDTMFExample(CallInterface call, char tone) {
   call.sendDTMF(tone);
 }
 ```
+<!-- tabs:end -->
 
 #### Get media attributes
 
@@ -1438,6 +1667,10 @@ The application is notified of audio/video state, capture device position, and a
 
 ###### Example: Using the getMediaAttributes method
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 MediaAttributes currentMediaAttributes = currentCall.getMediaAttributes();
 boolean localVideo = currentMediaAttributes.getLocalVideo();
@@ -1446,8 +1679,13 @@ boolean remoteVideo = currentMediaAttributes.getRemoteVideo();
 float remoteVideoAspectRatio = currentMediaAttributes.getRemoteVideoAspectRatio();
 float localVideoAspectRatio = currentMediaAttributes.getLocalVideoAspectRatio();
 ```
+<!-- tabs:end -->
 
 ###### Example: Getting remote and local aspect ratios
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -1456,6 +1694,7 @@ public void mediaAttributesChanged(CallInterface callInterface, MediaAttributes 
     float localVideoAspectRatio = mediaAttributes.getLocalVideoAspectRatio();
 }
 ```
+<!-- tabs:end -->
 
 The aspect ratio value is provided as the width/height of the video. For example, if the video resolution is:
 
@@ -1472,6 +1711,10 @@ If desired, custom SIP Headers can be send while initiating call and/or during t
 
 ###### Example: Sending Custom Parameters while establishing call
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 public void callWithCustomHeadersExample(String terminatorAddress, boolean videoEnabled, Map<String, String> customParameters) {
     callService.createOutgoingCall(terminatorAddress, new OutgoingCallCreateInterface()
@@ -1486,26 +1729,37 @@ public void callWithCustomHeadersExample(String terminatorAddress, boolean video
     });
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Setting Custom Parameters during the call
 
 Custom Parameters can be set during the call, and they will send when next mid-call event occurs.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void setParametersToCall(CallInterface call, Map<String, String> customParameters) {
     call.setCustomParameters(customParameters);
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Sending Custom Parameters during the call
 
 After setting custom parameters, instead of waiting next mid-call event, custom parameters can sent by `sendCustomParameters` method.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public void sendParametersToCall(CallInterface call, Map<String, String> customParameters) {
     call.sendCustomParameters(customParameters);
 }
 ```
+<!-- tabs:end -->
 
 #### Set ICE options
 
@@ -1517,16 +1771,21 @@ The Configuration class has an "iceOption" attribute used to determine the ICE b
 
 If the "ICE_TRICKLE" option is selected, the "ICECollectionTimeout" value is not used. If the call ends before all ICE candidates are collected, the MobileSDK does not listen to the TURN/STUN server since the peer connection is closed.
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>WARNING</h5>
 Both parties must support Trickle ICE; Half Trickle is not supported in this implementation. If one party does not support Trickle ICE, signaling may be completed, but the Vanilla ICE client cannot receive ICE candidates sent by the other party. This state should be handled by the developer either by checking the RTCP statistics or waiting for the user to end the call. The MobileSDK will not end the call.
-</div>
+<hr/>
 
 ###### Example: Setting ICE options
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 Configuration.getInstance().setICEOption(ICEOptions.ICE_TRICKLE);
 ```
+<!-- tabs:end -->
 
 #### Ringing feedback
 
@@ -1536,13 +1795,22 @@ When ringing feedback is disabled, SPiDR/Kandy Link sends the Ringing notificati
 
 ###### Example: Enabling ringing feedback feature
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 String supportedCallFeatures[] = { Constants.SupportedCallFeatures.RINGING_FEEDBACK.toString() };
 
 Configuration.getInstance().setSupportedCallFeatures(supportedCallFeatures);
 ```
+<!-- tabs:end -->
 
 ###### Example: Sending ringing feedback
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 @Override
@@ -1562,6 +1830,7 @@ public void ringingFeedbackFailed(IncomingCallInterface call, MobileError error)
   Log.e("Call", "Send ringing feedback failed : " + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 #### Early media
 
@@ -1571,13 +1840,22 @@ To support early media, feature should be added to `supportedCallFeatures` befor
 
 ###### Example: Enabling early media
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 String supportedCallFeatures[] = { Constants.SupportedCallFeatures.EARLY_MEDIA.toString() };
 
 Configuration.getInstance().setSupportedCallFeatures(supportedCallFeatures);
 ```
+<!-- tabs:end -->
 
 ###### Example: Call in early media
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 private CallState.Type callState = CallState.Type.UNKNOWN;
@@ -1602,6 +1880,7 @@ public void callStatusChanged(CallInterface callInterface, CallState callState) 
     callState = callState.getType();
 }
 ```
+<!-- tabs:end -->
 
 #### Set codec priority
 
@@ -1616,6 +1895,10 @@ If you create the preferredCodecSet variable with a default constructor, the Mob
 
 ###### Example: Setting codec priority
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 CodecSet preferredCodecSet = new CodecSet();
 AudioCodecType audioCodecs[] = {AudioCodecType.AC_G722, AudioCodecType.AC_PCMA, AudioCodecType.AC_PCMU}
@@ -1626,8 +1909,13 @@ preferredCodecSet.setVideoCodecs(videoCodecs);
 
 Configuration.getInstance().setPreferredCodecSet(preferredCodecSet);
 ```
+<!-- tabs:end -->
 
 Or
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 AudioCodecType audioCodecs[] = {AudioCodecType.AC_G722, AudioCodecType.AC_PCMA, AudioCodecType.AC_PCMU}
@@ -1635,6 +1923,7 @@ VideoCodecType videoCodecs[] = {VideoCodecType.VC_VP8};
 CodecSet preferredCodecSet = new CodecSet(audioCodecs, videoCodecs);
 Configuration.getInstance().setPreferredCodecSet(preferredCodecSet);
 ```
+<!-- tabs:end -->
 
 #### Replace codec payload number
 
@@ -1646,7 +1935,7 @@ For the replacing codec payload number feature, the MobileSDK user have to creat
 
 After the Mobile SDK user set the ReplaceCodecSet configuration, all of the local offer call SDPs will be generated with the specified codec payload numbers and there will be no modification done on remote SDPs and local answer SDPs.
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>NOTE</h5>
 <ul>
   <li>If this configuration is not set, the SDK will keep the default WebRTC behavior and there will be no modification on the codec payload numbers on the SDP.</li>
@@ -1655,9 +1944,13 @@ After the Mobile SDK user set the ReplaceCodecSet configuration, all of the loca
   If one of the codec numbers which is set through this configuration conflicts with number of another codec that WebRTC created, SDK will swap payload numbers of these two codecs to recover from the unpredictable behavior described above.</li>
   <li>As described in RFC5761, dynamic RTP payload types should be chosen from the range 96-127. Otherwise, this could cause an unstable WebRTC behavior.</li>
 </ul>
-</div>
+<hr/>
 
 ###### Example: Replace codec payload number
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 try {
@@ -1677,6 +1970,7 @@ try {
   //handle exception
 }
 ```
+<!-- tabs:end -->
 
 ###### Example: Effect of the Codec Payload Number Change on Sample SDPs
 
@@ -2039,13 +2333,17 @@ a=rtpmap:106 ulpfec/90000
 
 Mobile SDK users will be able to limit bandwidth for the media received in audio/video call. Setting the configuration will inform the other peer about this bandwidth limitation and ask it to favor this limit when sending audio/video media to Mobile SDK. Audio and Video bandwidth limit values can be set separately using the CallReceiveBandwidthLimit class. The important thing for Mobile SDK users is this parameter is global and user can set this once according to the platform restriction.
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>NOTE</h5>
 Once this configuration is set on Configuration object, it will apply for all of the outgoing and incoming calls from that point on. When an outgoing call or an incoming call starts, the bandwidth limit values read from this configuration and will be fixed to those values throughout the call session. If the configuration setting is changed on Configuration object, ongoing call sessions will not be affected by this change, only new sessions that are created will use the new bandwidth limit.
 </div>
-<br>
+<hr/>
 
 ###### Example: Bandwidth limitation
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 int audioReceiveBandwidth = 300;
@@ -2054,6 +2352,7 @@ int videoReceiveBandwidth = 1000;
 CallReceiveBandwidthLimit bandwidthLimit =  new CallReceiveBandwidthLimit(audioReceiveBandwidth , videoReceiveBandwidth);
 Configuration.getInstance.setReceiveBandwidthLimit(bandwidthLimit);
 ```
+<!-- tabs:end -->
 
 ###### Example: Effect of the Bandwidth Limit on Sample SDP
 
@@ -2080,6 +2379,10 @@ b=TIAS:1000000
 
 ###### Example: Bandwidth limitation only for video
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 int videoReceiveBandwidth = 1000;
 
@@ -2088,6 +2391,7 @@ bandwidthLimit.setVideoReceiveBandwidth(videoReceiveBandwidth);
 
 Configuration.getInstance.setReceiveBandwidthLimit(bandwidthLimit);
 ```
+<!-- tabs:end -->
 
 ###### Example: Effect of the Bandwidth Limit only for video on Sample SDP
 
@@ -2112,11 +2416,11 @@ b=TIAS:1000000
 
 #### Control audio bandwidth
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>WARNING</h5>
 Bandwidth limitation setting for audio bandwidth which is explained in previous section and controlling audio bandwidth using the feature in this section are features which configure the bandwidth preferences for audio media stream. Using both features at the same time may cause unexpected behavior.
 </div>
-<br>
+<hr/>
 
 Applications can modify five audio codec properties to control audio bandwidth. The MaxPlaybackRate, MaxAverageBitrate, Discontinuous Transmission (DTX), and Forward Error Correction (FEC) properties apply to the Opus audio codec. The fifth property, packetization time (ptime), affects all audio codecs. Refer to RFC 7587 for descriptions, acceptable values, and recommended values for the audio codec properties.
 
@@ -2146,12 +2450,21 @@ The following shows different audio bandwidth usage configuration examples. If a
 
 ###### Example: Use the Mobile SDK preferred set
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 AudioCodecConfiguration config = new AudioCodecConfiguration(AudioCodecConfiguration.DefaultConfigurationType.MOBILESDK_PREFERRED_SET);
 Configuration.getInstance().setAudioCodecConfigurations(config);
 ```
+<!-- tabs:end -->
 
 ###### Example: Use the Mobile SDK preferred set with changes
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 AudioCodecConfiguration config = new AudioCodecConfiguration(AudioCodecConfiguration.DefaultConfigurationType.MOBILESDK_PREFERRED_SET);
@@ -2159,8 +2472,13 @@ config.setOpusMaxAverageBitRate(25000);
 config.setOpusMaxPlaybackRate(24000);
 Configuration.getInstance().setAudioCodecConfigurations(config);
 ```
+<!-- tabs:end -->
 
 ###### Example: Use the WebRTC default set with changes
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 AudioCodecConfiguration config = new AudioCodecConfiguration(AudioCodecConfiguration.DefaultConfigurationType.WEBRTC_DEFAULT_SET);
@@ -2171,6 +2489,7 @@ config.setOpusFec(true);
 config.setPtime(40);
 Configuration.getInstance().setAudioCodecConfigurations(config);
 ```
+<!-- tabs:end -->
 
 #### Receive internal error notifications
 
@@ -2186,12 +2505,17 @@ Applications can listen for internal error notifications between the Mobile SDK 
 
 ###### Example: Implementing internal error notifications
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 @Override
 public void onInternalError(MobileError error) {
     Log.e("OnInternalError", "errorCode:" + error.getErrorCode() + " ,errorMessage:" + error.getErrorMessage());
 }
 ```
+<!-- tabs:end -->
 
 #### Get additional information about a call
 
@@ -2236,6 +2560,10 @@ The following list shows each available "action" category and its "type" sub-cat
 
 ###### Example: Listening call additional info changes
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 @Override
 private void callAdditionalInfoChanged (CallInterface call, Map<String, String> events)
@@ -2258,6 +2586,7 @@ private void callAdditionalInfoChanged (CallInterface call, Map<String, String> 
     Log.i("Call", "Detailed info is " + sb.toString());
 }
 ```
+<!-- tabs:end -->
 
 #### Retrieve audio and video RTP/RTCP statistics
 
@@ -2293,10 +2622,10 @@ The following are RTP/RTCP statistics related to camera and video resolution:
 
 See [Appendix E: Examples of call statistic data](#appendix-e-examples-of-call-statistic-data) for additional information.
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>WARNING</h5>
 If there is a bandwidth or CPU limitation, WebRTC will decrease video resolution and FPS values automatically. The Mobile SDK does not inform the application of the automatic change; the application must check the values using the getRTPStatistics method.
-</div>
+<hr/>
 
 ###### Example: CallStatistic object
 
@@ -2308,6 +2637,10 @@ values: [googActiveConnection: true], [bytesReceived: 92193], [byesSent: 87940],
 ```
 
 ###### Example: Retrieving statistics
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 currentCall.getRTPStatistics(new RTPStatisticHandler() {
@@ -2323,6 +2656,7 @@ currentCall.getRTPStatistics(new RTPStatisticHandler() {
     }
 });
 ```
+<!-- tabs:end -->
 
 For a full example of the data received, see [Appendix E: Examples of call statistic data](#appendix-e-examples-of-call-statistic-data).
 
@@ -2330,11 +2664,11 @@ For a full example of the data received, see [Appendix E: Examples of call stati
 
 ## Push Service
 
-<div style="border-style:solid; page-break-inside: avoid;">
+<hr/>
 <h5>WARNING</h5>
 In order to use the push service, please contact your Ribbon channel account manager as it requires a pre-provisioning process.
 </div>
-<br>
+<hr/>
 
 The Mobile SDK can subscribe to push channel to receive notifications from the call service while the application is in suspended or terminated state. But before start using the service, mobile application must be configured on Google Firebase Console to be able to receive Push Notifications. Then the following information must be supplied to the CPaaS admin for some server side configurations.
 - package name (unique ID of the application)
@@ -2347,6 +2681,10 @@ To be able to receive push notifications, applications must subscribe to push ch
 **Note:** The `pushServiceURL` configuration must be set on client before using the service.
 
 ###### Example: Subscribing to Push Service
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public class PushModule extends FirebaseInstanceIdService implements PushSubscriptionListener {
@@ -2378,12 +2716,11 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
         } catch (MobileException e) {
             // handle error case
         }
-
     }
-
     ...
 }
 ```
+<!-- tabs:end -->
 
 ### Updating Push Subscription
 
@@ -2391,9 +2728,12 @@ The OS can update the device token in some cases. The new device token must be u
 
 ###### Example: Updating Push Service Subscription
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 public class PushModule extends FirebaseInstanceIdService implements PushSubscriptionListener {
-
     ...
 
     @Override
@@ -2422,12 +2762,11 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
         } catch (MobileException e) {
             // handle error case
         }
-
     }
-
     ...
 }
 ```
+<!-- tabs:end -->
 
 ### Removing Push Subscription
 
@@ -2435,9 +2774,12 @@ To stop receiving push notifications, client should remove the push subscription
 
 ###### Example: Removing Push Service Subscription
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 public class PushModule extends FirebaseInstanceIdService implements PushSubscriptionListener {
-
     ...
 
     public void unsubscribe() {
@@ -2457,12 +2799,11 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
               // handle error case
           }
         });
-
     }
-
     ...
 }
 ```
+<!-- tabs:end -->
 
 ### Injecting Push Messages to MobileSDK
 
@@ -2474,6 +2815,10 @@ According to the registration state, client should take the following actions:
 - If the client not registered to server, client should register first then it can inject the notification to the MobileSDK.
 
 ###### Example: Injecting Push Message
+
+<!-- tabs:start -->
+
+#### ** Java Code **
 
 ```java
 public class PushReceiver extends FirebaseMessagingService {
@@ -2521,6 +2866,7 @@ public class PushReceiver extends FirebaseMessagingService {
     }
 }
 ```
+<!-- tabs:end -->
 
 ### Handling Push Subscription Events
 
@@ -2530,9 +2876,12 @@ The push subscription can be removed from the server side by the system admin. I
 
 ###### Example: Implementing PushSubscriptionListener
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 public class PushModule extends FirebaseInstanceIdService implements PushSubscriptionListener {
-
     ...
 
     @Override
@@ -2541,10 +2890,10 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
         // client needs to re-subscribe to push channel. No more push notifications will be received
         // until client subscribes to push service again.
     }
-
     ...
 }
 ```
+<!-- tabs:end -->
 
 <div class="page-break"></div>
 
@@ -2628,6 +2977,10 @@ The following impacts should be considered when managing your mobile application
 
 This section contains usage of all configurations that Mobile SDK provides.
 
+<!-- tabs:start -->
+
+#### ** Java Code **
+
 ```java
 public class Demo {
     public void configurationExample() {
@@ -2684,6 +3037,7 @@ public class Demo {
     }
 }
 ```
+<!-- tabs:end -->
 
 <div class="page-break"></div>
 

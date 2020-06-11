@@ -6,7 +6,7 @@
 
 ## Install
 
-To integrate Kandy Link Android SDK to your project, please follow [this link](https://kandy-io.github.io/kandy-link-android-sdk/tutorials/#/?id=adding-mobilesdk-dependency-to-your-project) 
+To integrate *Kandy Link Android SDK* to your project, please follow [this link](https://kandy-io.github.io/kandy-link-android-sdk/tutorials/#/?id=adding-mobilesdk-dependency-to-your-project) 
 
 ## Documentation
 
