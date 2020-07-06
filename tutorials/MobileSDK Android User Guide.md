@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **June 12, 2020**
+Revision Date: **July 3 , 2020**
 
 ## Mobile SDK overview
 
@@ -9,11 +9,11 @@ The SPiDR/Kandy Link Mobile Software Development Kit (SDK) defines a library imp
 
 The Mobile SDK has the following characteristics:
 
-* supports REST over HTTP/HTTPS for integration with the presentation layer of SPiDR/Kandy Link
-* supports WebSocket for notification
-* built and distributed as a standard library structure for easy use in mobile applications
-* most features are implemented based on factory and singleton design patterns
-* access to REST APIs provided by Ribbon's Kandy platform
+* Supports REST over HTTP/HTTPS for integration with the presentation layer of SPiDR/Kandy Link
+* Supports WebSocket for notification
+* Built and distributed as a standard library structure for easy use in mobile applications
+* Most features are implemented based on factory and singleton design patterns
+* Access to REST APIs provided by Ribbon's Kandy platform
 
 See [Appendix A: High-level Mobile SDK structure](#appendix-a-high-level-mobile-sdk-structure) for a high-level view of the Mobile SDK and its sub-modules.
 
@@ -62,7 +62,7 @@ The following procedure uses Android Studio IDE to create a simple application w
 
  * Select minimum Android SDK version for phone and tablet (API Level 16 is recommended).
 
-    Note that, this is the minimum Android SDK API version that the demo application supports.
+    Note that this is the minimum Android SDK API version that the demo application supports.
 
     For the target SDK version, Please check Google suggestion from the [link](https://developer.android.com/distribute/best-practices/develop/target-sdk). Target SDK can be changed on **build.gradle** file after the project creation.
 
@@ -70,7 +70,7 @@ The following procedure uses Android Studio IDE to create a simple application w
 
 ### Adding MobileSDK dependency to your project
 
-There are 2 option to add MobileSDK dependency to your project. You can add MobileSDK dependency from github repository or you can add it your project manually. This document will explain both options in detail.
+There are 2 options to add MobileSDK dependency to your project. You can add MobileSDK dependency from github repository or you can add it to your project manually. This document will explain both options in detail.
 
 #### Adding the dependency from GitHub repository
 
@@ -91,7 +91,7 @@ allprojects {
 
 ![alt text](images/get_started_4.png "")
 
-2. Add dependcy of MobileSDK to your app level **build.gradle** file.
+2. Add dependency of MobileSDK to your app level **build.gradle** file.
 
 ```groovy
 implementation 'com.kandy.mobile:kandylinkmobilesdk:{$SDK_VERSION$}'
@@ -120,7 +120,7 @@ flatDir {
 
 ![alt text](images/get_started_7.png "")
 
-3. Add dependcy of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
+3. Add dependency of MobileSDK to your app level **build.gradle** file with **@aar** prefix.
 
 ```groovy
 implementation 'com.kandy.mobile:kandylinkmobilesdk:{$SDK_VERSION$}@aar'
@@ -234,6 +234,17 @@ public class MainActivity extends Activity {
     }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+    }
+}
+```
 <!-- tabs:end -->
 
 7. Define the configuration attributes.
@@ -262,6 +273,29 @@ public void configExample() {
     configuration.setWebSocketServerPort(443);
     configuration.setSecuredWSProtocol(true);
 }
+```
+#### ** Kotlin Code **
+
+```kotlin
+fun configExample(){
+        val configuration = Configuration.getInstance()
+        configuration.username = "alice@rbbn.com"
+        configuration.password = "password"
+        configuration.restServerIp = "SUBSCRIPTIONFQDN$"
+        configuration.restServerPort = 443
+        configuration.requestHttpProtocol = false
+
+        val iceServers = ICEServers()
+        iceServers.addICEServer("$TURNSERVER1$")
+        iceServers.addICEServer("$TURNSERVER2$")
+        iceServers.addICEServer("STUNSERVER1$")
+        iceServers.addICEServer("STUNSERVER2$")
+        configuration.iceServers = iceServers
+
+        configuration.webSocketServerIp = "$WEBSOCKETFQDN$"
+        configuration.webSocketServerPort = 443
+        configuration.securedWSProtocol = true
+    }
 ```
 <!-- tabs:end -->
 
@@ -313,6 +347,46 @@ public void register() {
     });
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun register(){
+        val registrationApplicationListener = object : RegistrationApplicationListener {
+            override fun registrationStateChanged(state: RegistrationStates?) {
+                // Handle registration state changes
+            }
+
+            override fun notificationStateChanged(state: NotificationStates?) {
+                // Handle notification state changes
+            }
+            
+            override fun onInternalError(mobileError: MobileError?) {
+                // Handle internal errors
+            }
+        }
+        
+        val serviceProvider = ServiceProvider.getInstance(applicationContext)
+        val registrationService = serviceProvider.registrationService
+        //Get registration notifications
+        registrationService.setRegistrationApplicationListener(registrationListener)
+        //Service types used in registration
+        val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
+            Constants.SubscribeServices.IM,
+            Constants.SubscribeServices.Presence)
+        registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
+            override fun onSuccess() {
+                //Handle registration success
+                //Developer can get expiration time, which is gathered from registration response
+                val expirationTime = registrationService.expirationTime
+            }
+
+            override fun onFail(error: MobileError?) {
+                //Handle registration error
+            }
+        })
+    }
+```
 <!-- tabs:end -->
 
 9. Define a global variable call.
@@ -323,6 +397,12 @@ public void register() {
 
 ```java
 CallInterface call;
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+var call:CallInterface? = null
 ```
 <!-- tabs:end -->
 
@@ -366,6 +446,38 @@ registrationService.registerToServer(subscribeServices, 3600, new OnCompletionLi
     }
 });
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
+            override fun onSuccess() {
+                val serviceProvider = ServiceProvider.getInstance(applicationContext)
+                val callService = serviceProvider.callService
+                try {
+                    callService.setCallApplication(this@MainActivity)
+                } catch (exception:MobileException){
+                }
+                    callService.createOutgoingCall("alice@rbbn.com", "bob@rbbn.com", object:OutgoingCallCreateInterface{
+                        override fun callCreated(callInterface: OutgoingCallInterface?) {
+                            call = callInterface
+                            callInterface?.setLocalVideoView(findViewById(R.id.localVideoView))
+                            callInterface?.setRemoteVideoView(findViewById(R.id.remoteVideoView))
+                            callInterface?.establishCall(true)
+                        }
+
+                        override fun callCreationFailed(error: MobileError?) {
+
+                        }
+
+                    })
+            }
+
+            override fun onFail(error: MobileError?) {
+                //Handle registration error
+            }
+        })
+```
 <!-- tabs:end -->
 
 11. The Call service uses callbacks to publish response events. To receive callbacks, a class must implement the necessary interface.
@@ -386,6 +498,18 @@ public class MainActivity extends Activity
 
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class MainActivity : AppCompatActivity(), CallApplicationListener {
+
+.
+.
+.
+
+}    
+```
 <!-- tabs:end -->
 
 12. Bind the register() method with the start video button.
@@ -403,6 +527,15 @@ startCall.setOnClickListener(new View.OnClickListener() {
     }
 });
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val startCall = findViewById<Button>(R.id.startVideoButton)
+        startCall.setOnClickListener { 
+        register()
+    }
+```
 <!-- tabs:end -->
 
 13. Define stopCall() method.
@@ -417,6 +550,15 @@ public void stopCall() throws MobileException {
         call.endCall();
     }
 }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+@Throws(MobileException::class)
+    fun stopCall(){
+        call?.endCall()
+    }
 ```
 <!-- tabs:end -->
 
@@ -444,6 +586,25 @@ public void endCallSucceeded(CallInterface call) {
     });
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun endCallSucceeded(call: CallInterface?) {
+        val serviceProvider = ServiceProvider.getInstance(applicationContext)
+        val registrationService = serviceProvider.registrationService
+        registrationService.unregisterFromServer(object:OnCompletionListener{
+            override fun onSuccess() {
+                //Handle unregistration success
+            }
+
+            override fun onFail(error: MobileError?) {
+                //Handle unregistration error
+            }
+
+        })
+    }
+```
 <!-- tabs:end -->
 
 15. Bind the stopCall method with the stop video button.
@@ -464,6 +625,18 @@ stopCall.setOnClickListener(new View.OnClickListener() {
         }
     }
 });
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val stopCall = findViewById<Button>(R.id.stopVideoButton)
+        stopCall.setOnClickListener {
+            try{
+                stopCall()
+            } catch (exception:MobileException){
+    }
+}
 ```
 <!-- tabs:end -->
 
@@ -498,6 +671,20 @@ protected void onResume()
     SDKEventManager.handleEvent(SDKEvents.EVENT_FOREGROUND);
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun onPause() {
+        super.onPause()
+        SDKEventManager.handleEvent(Constants.SDKEvents.EVENT_BACKGROUND)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SDKEventManager.handleEvent(Constants.SDKEvents.EVENT_FOREGROUND)
+    }
+```
 <!-- tabs:end -->
 
 <hr/>
@@ -527,6 +714,19 @@ protected void onResume()
     call2.setLocalVideoView((VideoView)findViewById(R.id.localVideoView2));
     call2.setRemoteVideoView((VideoView)findViewById(R.id.remoteVideoView2));
 }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun onResume() {
+        super.onResume()
+        SDKEventManager.handleEvent(Constants.SDKEvents.EVENT_FOREGROUND)
+        call?.setLocalVideoView(findViewById(R.id.localVideoView))
+        call?.setRemoteVideoView(findViewById(R.id.remoteVideoView))
+        call2?.setLocalVideoView(findViewById(R.id.localVideoView2))
+        call2?.setRemoteVideoView(findViewById(R.id.remoteVideoView2))
+    }
 ```
 <!-- tabs:end -->
 
@@ -579,6 +779,41 @@ public class Demo {
     }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class Demo{
+    fun configurationExample(){
+        //Configuration.getInstance is used to access the static Configuration instance
+        val configuration = Configuration.getInstance()
+
+        //set minimum Configuration values
+
+        //user name for authorization (minimum Configuration item setting)
+        configuration.username = "username"
+        //password for authorization
+        configuration.password = "password"
+        //server IP value for SPiDR/Kandy Link
+        configuration.restServerIp = ""$SUBSCRIPTIONFQDN$""
+        //server port value for SPiDR/Kandy Link
+        configuration.restServerPort = 443
+
+        //IP used in websocket connection creation
+        configuration.webSocketServerIp = "$WEBSOCKETFQDN$"
+        //port used in websocket connection creation
+        configuration.webSocketServerPort = 443
+
+        //SPiDR/Kandy Link TURN server using udp transport in WebRTC's peer connection
+        val iceServers = ICEServers()
+        iceServers.addICEServer("$TURNSERVER1$")
+        iceServers.addICEServer("$TURNSERVER2$")
+        iceServers.addICEServer("$STUNSERVER1$")
+        iceServers.addICEServer("$STUNSERVER2$")
+        configuration.iceServers = iceServers
+    }
+}
+```
 <!-- tabs:end -->
 
 ### Set up logging functionality
@@ -617,6 +852,25 @@ public class LogUtilityExample implements LoggingInterface {
     }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class LogUtilityExample : LoggingInterface {
+    
+    override fun log(loglevel: Constants.LogLevel?, tag: String?, message: String?) {
+        if(loglevel == Constants.LogLevel.ERROR) {
+            Log.e(tag, message)
+        } else if(loglevel == Constants.LogLevel.WARNING) {
+            Log.w(tag, message)
+        } else if(loglevel == Constants.LogLevel.INFO) {
+            Log.i(tag, message)
+        } else {
+            Log.d(tag, message)
+        }
+    }
+}
+```
 <!-- tabs:end -->
 
 ###### Example: Initialize logger
@@ -630,6 +884,15 @@ public void initializeAndUseLogger() {
 	Configuration.getInstance().setLogger(new LogUtilityExample());
 	LogManager.log(LogLevel.INFO, "Test", "logger is initialized");
 }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun initializeAndUseLogger(){
+        Configuration.getInstance().logger = LogUtilityExample()
+        LogManager.log(Constants.LogLevel.INFO,"Test","logger is initialized")
+    }
 ```
 <!-- tabs:end -->
 
@@ -690,6 +953,38 @@ registrationService.registerToServer(subscribeServices, 3600,
     }
 });
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val registrationListener = object : RegistrationApplicationListener {
+            override fun registrationStateChanged(state: RegistrationStates?) {
+                // Handle registration state changes
+            }
+
+            override fun notificationStateChanged(state: NotificationStates?) {
+                // Handle notification state changes
+            }
+}           
+val registrationService = ServiceProvider.getInstance(applicationContext).registrationService
+        //Get registration notifications
+        registrationService.setRegistrationApplicationListener(registrationListener)
+        //Service types used in registration
+        val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
+            Constants.SubscribeServices.Presence,
+            Constants.SubscribeServices.IM)
+        registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
+            override fun onSuccess() {
+                //Handle registration success
+                //Developer can get expiration time, which is gathered from registration response
+                val expirationTime = registrationService.expirationTime
+            }
+
+            override fun onFail(error: MobileError?) {
+                //Handle registration error
+            }
+        })                       
+```
 <!-- tabs:end -->
 
 ### Unregister the client
@@ -728,6 +1023,32 @@ registrationService.unregisterFromServer(new OnCompletionListener() {
         //Handle unregistration error
     }
 });
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val registrationListener = object : RegistrationApplicationListener {
+            override fun registrationStateChanged(state: RegistrationStates?) {
+                // Handle registration state changes
+            }
+
+            override fun notificationStateChanged(state: NotificationStates?) {
+                // Handle notification state changes
+            }
+}     
+
+val registrationService = ServiceProvider.getInstance(applicationContext).registrationService
+        registrationService.unregisterFromServer(object:OnCompletionListener{
+            override fun onSuccess() {
+                //Handle unregistration success
+            }
+
+            override fun onFail(error: MobileError?) {
+                //Handle unregistration error
+            }
+
+        })
 ```
 <!-- tabs:end -->
 
@@ -771,6 +1092,33 @@ registrationService.registerToServer(subscribeServices, 3600,
     }
 });
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val registrationService = ServiceProvider.getInstance(applicationContext).registrationService
+
+//Set AuthName
+Configuration.getInstance().authorizationName = "AuthName"
+Configuration.getInstance().username = "username"
+Configuration.getInstance().password = "password"
+
+//Get registration notifications
+        registrationService.setRegistrationApplicationListener(registrationListener)
+        //Service types used in registration
+        val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
+            Constants.SubscribeServices.Presence,
+            Constants.SubscribeServices.IM)
+        registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
+            override fun onSuccess() {
+                //Handle registration success
+            }
+
+            override fun onFail(error: MobileError?) {
+                //Handle registration error
+            }
+        })                    
+```
 <!-- tabs:end -->
 
 <div class="page-break"></div>
@@ -781,7 +1129,7 @@ registrationService.registerToServer(subscribeServices, 3600,
 
 Create outgoing calls by providing the target contact address and related UI views for video display, or receive incoming calls from another user.
 
-#### Listen Call Service notifications
+#### Listen For Call Service notifications
 
 To receive incoming calls and event notifications of call service, `CallApplicationListener` should be implemented by calling `setCallApplication`.
 
@@ -804,13 +1152,25 @@ public class CallActivity extends Activity implements RegistrationApplicationLis
   }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class CallActivity : AppCompatActivity(), RegistrationApplicationListener, CallApplicationListener {
+    override fun registrationStateChanged(state: RegistrationStates?) {
+        if(RegistrationStates.REGISTERED.equals(state)){
+            callService.setCallApplication(this@CallActivity)
+        }
+    }
+}
+```
 <!-- tabs:end -->
 
-#### Add STUN/TURN servers
+#### Adding STUN/TURN servers
 
 SPiDR/Kandy Link provides TURN server support for media relay between two WebRTC endpoints in core version 3.0 and later. The ICEServers property in the Configuration class is used to store the ICE servers list; more than one ICEServer can exist in this property.
 
-##### Add SPiDR's (Kandy Link) TURN server
+##### Adding SPiDR's (Kandy Link) TURN server
 
 After registration, the Mobile SDK gets default credentials from SPiDR/Kandy Link for the TURN servers and updates the defaultICEUsername and defaultICEPassword configuration properties. The list of ICEServers and their credentials are added to the PeerConnection when creating a call.
 
@@ -833,15 +1193,26 @@ servers.addICEServer("$STUNSERVER2$");
 
 Configuration.getInstance().setICEServers(servers);
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val iceServers = ICEServers()
+iceServers.addICEServer("$TURNSERVER1$")
+iceServers.addICEServer("$TURNSERVER2$")
+iceServers.addICEServer("$STUNSERVER1$")
+iceServers.addICEServer("$STUNSERVER2$")
+Configuration.getInstance().iceServers = iceServers
+```
 <!-- tabs:end -->
 
-##### Add an external TURN/STUN server
+##### Adding an external TURN/STUN server
 
 You also have the option of using external TURN/STUN servers while establishing calls rather than SPiDR's (Kandy Link) TURN server(s). The ICEServers property will store the address and username/password for the server(s).
 
 Use the addICEServer(iceServerURL, username, password) method of the ICEServers object to define credentials.
 
-###### Example: Add a STUN server
+###### Example: Adding a STUN server
 
 <!-- tabs:start -->
 
@@ -855,11 +1226,22 @@ Configuration.getInstance().setICEServers(servers);
 ICEServers servers = Configuration.getInstance().getICEServers();
 servers.addICEServer("$STUNSERVER1$");
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val servers = ICEServers()
+servers.addICEServer("$STUNSERVER1$")
+Configuration.getInstance().iceServers = servers
+//or
+val servers = Configuration.getInstance().iceServers
+servers.addICEServer("$STUNSERVER1$")
+```
 <!-- tabs:end -->
 
 <div class="page-break"></div>
 
-###### Example: Add a TURN server
+###### Example: Adding a TURN server
 
 <!-- tabs:start -->
 
@@ -871,9 +1253,18 @@ servers.addICEServer("$TURNSERVER1$", "username", "password");
 servers.addICEServer("$TURNSERVER2$", "username", "password");
 servers.addICEServer("$TURNSERVER2$", "username", "password");
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val servers = Configuration.getInstance().iceServers
+servers.addICEServer("$TURNSERVER1$", "username", "password")
+servers.addICEServer("$TURNSERVER2$", "username", "password")
+servers.addICEServer("$TURNSERVER2$", "username", "password")
+```
 <!-- tabs:end -->
 
-###### Example: Get the server(s)
+###### Example: Getting the server(s)
 
 <!-- tabs:start -->
 
@@ -884,13 +1275,25 @@ ICEServers iceServers = Configuration.getInstance().getICEServers();
 
 //credentials may also be updated directly
 ArrayList<ICEServer> serversArray = iceServers.servers();
-String urlOfFirst   = serversArray.getFirst().getUrl();
+String urlOfFirst  = serversArray.getFirst().getUrl();
 String userOfFirst = serversArray.getFirst().getUsername();
 String passOfFirst = serversArray.getFirst().getPassword();
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val iceServers = Configuration.getInstance().iceServers
+
+//credentials may also be updated directly
+val servicesArray = iceServers.iceServers as ArrayList<ICEServers.ICEServer>
+val urlOfFirst  = servicesArray.first().url
+val userOfFirst = servicesArray.first().username
+val passOfFirst = servicesArray.first().password
+```
 <!-- tabs:end -->
 
-If a server URL is entered multiple times, the last username and password will be used for the specified server. To remove a server, you must dispose the existing one and create a new instance, defining necessary servers again.
+If a server URL is entered multiple times, the last username and password will be used for the specified server. To remove a server, you must remove the existing one and create a new instance, defining necessary servers again.
 
 <div class="page-break"></div>
 
@@ -946,6 +1349,45 @@ public void establishCallFailed(OutgoingCallInterface outgoingCall, MobileError 
     Log.e("Call", "establish call failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun callExample(){
+        //prepare outgoing call parameters
+        val terminatorAddress = "user@domain"
+        //initialize related video UI views for local and remote video display
+        val localVideoView = findViewById<VideoView>(R.id.localVideoView)
+        val remoteVideoView = findViewById<VideoView>(R.id.remoteVideoView)
+
+        callService.createOutgoingCall(terminatorAddress, object:OutgoingCallCreateInterface{
+            override fun callCreated(callInterface: OutgoingCallInterface?) {
+                callInterface?.setLocalVideoView(localVideoView)
+                callInterface?.setRemoteVideoView(remoteVideoView)
+                //To create an audio and video call:
+                callInterface?.establishCall(true)
+                //OR To create audio only call with two m lines which can be answered with video
+                //directly, use:
+                callInterface?.establishCall(false)
+                //OR To create an audio only call with only one m line, use:
+                callInterface?.establishAudioCall()
+            }
+
+            override fun callCreationFailed(p0: MobileError?) {
+            }
+        })
+    }
+
+    override fun establishCallSucceeded(outgoingCall: OutgoingCallInterface?) {
+        //called when establish call succeeds
+        Log.i("Call", "establish call is OK")
+    }
+
+    override fun establishCallFailed(outgoingCall: OutgoingCallInterface?, error: MobileError?) {
+        //called when establish call fails
+        Log.e("Call", "establish call failed : " + error?.errorMessage)
+    }
+```
 <!-- tabs:end -->
 
 #### Receive an incoming call
@@ -994,6 +1436,43 @@ public void acceptCallFailed(IncomingCallInterface incomingCall, MobileError err
   Log.e("Call", "accept call failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+ override fun incomingCall(incomingCall: IncomingCallInterface?) {
+        this.incomingCall = incomingCall
+
+        //initialize related video UI views for local and remote video display
+        val localVideoView = findViewById<VideoView>(R.id.localVideoView)
+        val remoteVideoView = findViewById<VideoView>(R.id.remoteVideoView)
+        //assign UI elements
+        incomingCall?.setLocalVideoView(localVideoView)
+        incomingCall?.setRemoteVideoView(remoteVideoView)
+
+        //If you want to check if the call has a video m line:
+        if (incomingCall!!.canReceiveVideo()) {
+            //If call has video m line and you want to answer with video:
+            incomingCall.acceptCall(true)
+            //OR if you want to answer with audio only:
+            incomingCall.acceptCall(false)
+        } else {
+            //If call has only one m line, the call will be answered with audio only
+            incomingCall.acceptCall(false)
+        }
+    }
+
+    override fun acceptCallSucceed(incomingCall: IncomingCallInterface?) {
+        //called when accept call succeeds
+        Log.i("Call", "accept call is OK")
+    }
+
+    override fun acceptCallFailed(incomingCall: IncomingCallInterface?, error: MobileError?) {
+        //called when accept call fails
+        Log.e("Call", "accept call failed : " + error?.errorMessage)
+    }
+
+```
 <!-- tabs:end -->
 
 ###### Example: Rejecting and ignoring the incoming call
@@ -1036,6 +1515,38 @@ public void ignoreFailed(IncomingCallInterface incomingCall, MobileError error) 
   Log.e("Call", "ignore call failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun incomingCall(incomingCall: IncomingCallInterface?) {
+    // To reject the call
+    incomingCall?.rejectCall()
+
+    // To ignore the call
+    incomingCall?.ignoreCall()
+}    
+
+override fun rejectCallSuccedded(incomingCall: IncomingCallInterface?) {
+    //called when reject call succeeds
+    Log.i("Call", "reject call is OK")
+}
+
+override fun rejectCallFailed(incomingCall: IncomingCallInterface?, error: MobileError?) {
+    //called when reject call fails
+    Log.e("Call", "reject call failed : " + error?.errorMessage)
+}
+
+override fun ignoreSucceed(incomingCall: IncomingCallInterface?) {
+    //called when ignore call succeeds
+    Log.i("Call", "ignore call is OK")
+}
+
+override fun ignoreFailed(incomingCall: IncomingCallInterface?, error: MobileError?) {
+    //called when ignore call fails
+    Log.e("Call", "ignore call failed : " + error?.errorMessage)
+}           
+```
 <!-- tabs:end -->
 
 ###### Example: Forwarding the incoming call
@@ -1064,6 +1575,28 @@ public void forwardCallSucceeded(IncomingCallInterface incomingCall) {
 public void forwardCallFailed(IncomingCallInterface incomingCall, MobileError error) {
   //called when forward call fails
   Log.e("Call", "forward call failed : " + error.getErrorMessage());
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun incomingCall(incomingCall: IncomingCallInterface?) {
+
+        // To forward the call
+
+        val targetAddress = // address of the user to whom the call is forwarded
+        incomingCall?.transferCall(targetAddress)
+}
+
+override fun forwardCallSucceeded(incomingCall: IncomingCallInterface?) {
+        //called when forward call succeeds
+        Log.i("Call", "forward call is OK")
+}
+
+override fun forwardCallFailed(incomingCall: IncomingCallInterface?, error: MobileError?) {
+        //called when forward call fails
+        Log.e("Call", "forward call failed : " + error?.errorMessage)
 }
 ```
 <!-- tabs:end -->
@@ -1098,11 +1631,30 @@ public void endCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "end call failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun endCallExample(){
+        // To end the call
+        call?.endCall()
+    }
+
+override fun endCallSucceeded(call: CallInterface?) {
+        //called when end call succeeds
+        Log.i("Call", "end call is OK")
+}
+
+override fun endCallFailed(call: CallInterface?, error: MobileError?) {
+        //called when end call fails
+        Log.e("Call", "end call failed : " + error?.errorMessage)
+}
+```
 <!-- tabs:end -->
 
 #### End call with reason
 
-Applications can use the `endCallWithReason` API to send the end call reason to SPiDR/Kandy Link, then SPiDR/Kandy Link will send message with the reason to the remote user. The remote user gets the reason using the `callStatusChanged` API.
+Applications can use the `endCall` API to send the end call reason to SPiDR/Kandy Link, then SPiDR/Kandy Link will send message with the reason to the remote user. The remote user gets the reason using the `callStatusChanged` API.
 If the call end reason string length exceeds the character limitation defined in SPiDR/Kandy Link Core, then SPiDR/Kandy Link Core will not send the excess characters.
 
 ###### Example: End call with reason
@@ -1113,6 +1665,12 @@ If the call end reason string length exceeds the character limitation defined in
 
 ```java
 call.endCall("Reason"); // ends the call with reason
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+call?.endCall("reason") // ends the call with reason
 ```
 <!-- tabs:end -->
 
@@ -1130,11 +1688,21 @@ public void callStatusChanged(CallInterface callInterface, CallState callState) 
     }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun callStatusChanged(callInterface: CallInterface, callState: CallState) {
+        if (callState.type == CallState.Type.ENDED){
+            Log.i(TAG,"Call Ended with reason:" + callState.reason)
+        }
+}
+```
 <!-- tabs:end -->
 
 #### Supported call end reasons
 
-When an endCall notification is received from SPiDR/Kandy Link, the Mobile SDK forwards the status code (statusCode) and status reason (reasonText) to the application layer, informing the user why the call has ended.
+When an endCall notification is received from SPiDR/Kandy Link, the Mobile SDK forwards the status code (statusCode) and status reason (reason) to the application layer, informing the user why the call has ended.
 
 Mobile SDK-specific status codes and reasons sent to the application layer include:
 
@@ -1174,6 +1742,14 @@ Other SIP-specific sessionParam statusCode values mapped to ENDED (e.g. statusCo
 private Type type;
 private int statusCode;
 private String reason;
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+private var type:Call.Type? = null
+private var statusCode:Int? = null
+private var reason:String? = null 
 ```
 <!-- tabs:end -->
 
@@ -1222,6 +1798,49 @@ public void callStatusChanged(CallInterface callInterface, CallState callState);
   }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun callStatusChanged(callInterface: CallInterface, callState: CallState) {
+        when (callState.type) {
+            CallState.Type.ENDED -> when (callState.statusCode) {
+                404 -> Log.i("Call", "Callee does not exist")
+                480 -> Log.i("Call", "Callee is offline")
+                603 -> {
+                    Log.i("Call", "Callee rejected the call")
+                    Log.i("Call", "Callee did not answer")
+                    Log.i("Call", "Call end reason is not provided")
+                }
+                487 -> {
+                    Log.i("Call", "Callee did not answer")
+                    Log.i("Call", "Call end reason is not provided")
+                }
+                CallState.STATUS_CODE_NOT_PROVIDED -> Log.i(
+                    "Call",
+                    "Call end reason is not provided"
+                )
+                CallState.ENDED_BY_LOCAL -> {
+                    Log.i("Call", "Caller ended the call normally")
+                    Log.i("Call", "Other device responded to incoming call")
+                }
+                CallState.RESPONDED_FROM_ANOTHER_DEVICE -> Log.i(
+                    "Call",
+                    "Other device responded to incoming call"
+                )
+                else -> {
+                }
+            }
+            CallState.Type.IN_CALL -> Log.i(
+                "Call",
+                "Call establishment is successful"
+            )
+            CallState.Type.RINGING -> Log.i("Call", "Callee is ringing now")
+            else -> {
+            }
+        }
+    }
+```
 <!-- tabs:end -->
 
 #### Get active call list
@@ -1236,6 +1855,12 @@ Use the following API to get a pointer to the list of active call objects (i.e. 
 
 ```java
 ImmutableList callList = callService.getActiveCalls();
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val activeCalls = callService.activeCalls
 ```
 <!-- tabs:end -->
 
@@ -1288,6 +1913,37 @@ public void unMuteCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "unmute call failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun muteUnmuteExample(){
+        // To mute the call
+        call?.mute()
+
+        // To unmute the call
+        call?.unMute()
+    }
+override fun muteCallSucceed(call: CallInterface?) {
+        //called when mute call succeeds
+        Log.i("Call", "mute call is OK")
+}
+
+override fun muteCallFailed(call: CallInterface?, error: MobileError?) {
+        //called when mute call fails
+        Log.e("Call", "mute call failed : " + error?.errorMessage)
+}
+
+override fun unMuteCallSucceed(call: CallInterface?) {
+        //called when unmute call succeeds
+        Log.i("Call", "unmute call is OK")
+}
+
+override fun unMuteCallFailed(call: CallInterface?,error: MobileError?) {
+        //called when unmute call fails
+        Log.e("Call", "unmute call failed : " + error?.errorMessage)
+}
+```
 <!-- tabs:end -->
 
 ##### Video Start/Stop on a Call
@@ -1331,6 +1987,38 @@ public void videoStopSucceed(CallInterface call) {
 public void videoStopFailed(CallInterface call, MobileError error) {
   //called when video stop fails
   Log.e("Call", "video stop failed : " + error.getErrorMessage());
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun videoStartStopExample(){
+        // To start video in the call
+        call?.videoStart()
+
+        // To stop video in the call
+        call?.videoStop()
+}
+
+override fun videoStartSucceed(call: CallInterface?) {
+        //called when video start succeeds
+        Log.i("Call", "video start is OK")
+}
+
+override fun videoStartFailed(call: CallInterface?, error: MobileError?) {
+        //called when video start fails
+        Log.e("Call", "video start failed : " + error?.errorMessage)
+}
+
+override fun videoStopSucceed(call: CallInterface?) {
+        //called when video stop succeeds
+        Log.i("Call", "video stop is OK")
+}
+
+override fun videoStopFailed(call: CallInterface?, error: MobileError?) {
+        //called when video stop fails
+        Log.e("Call", "video stop failed : " + error?.errorMessage)
 }
 ```
 <!-- tabs:end -->
@@ -1388,6 +2076,39 @@ public void unHoldCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "unhold call failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun holdUnholdExample(){
+        // To hold the call
+        call?.holdCall()
+        // If call in REMOTELY_HELD state, will be ON_DOUBLE_HOLD
+
+        // To unhold the call
+        call?.unHoldCall()
+    }
+
+override fun holdCallSucceed(call: CallInterface?) {
+        //called when hold call succeeds
+        Log.i("Call", "hold call is OK")
+}
+
+override fun holdCallFailed(call: CallInterface?, error: MobileError?) {
+        //called when hold call fails
+        Log.e("Call", "hold call failed : " + error?.errorMessage)
+}
+
+override fun unHoldCallSucceed(call: CallInterface?) {
+        //called when unhold call succeeds
+        Log.i("Call", "unhold call is OK")
+}
+
+override fun unHoldCallFailed(call: CallInterface?, error: MobileError?) {
+        //called when unhold call fails
+        Log.e("Call", "unhold call failed : " + error?.errorMessage)
+}
+```
 <!-- tabs:end -->
 
 ###### Example: Hold/unhold callback information
@@ -1411,6 +2132,20 @@ public void callStatusChanged(CallInterface callInterface, CallState callState);
     }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun callStatusChanged(callInterface: CallInterface, callState: CallState) {
+        if(callState == CallState.Type.ON_HOLD) {
+            Log.i("Call", "Call is on hold")
+        } else if(callState == CallState.Type.REMOTELY_HELD) {
+            Log.i("Call", "Remote party holds the call")
+        } else if(callState == CallState.Type.ON_DOUBLE_HOLD) {
+            Log.i("Call", "Both parties are in hold state")
+        }
+}    
+```
 <!-- tabs:end -->
 
 ##### Adhoc conference/3­-way call
@@ -1424,8 +2159,8 @@ Two different calls can be combined into a three-way call (ad-hoc conference). E
 #### ** Java Code **
 
 ```java
-public void threewayCallExample(CallInterface call1, CallInterface call2) {
-  callService.createThreeWayCall(call1, call2,
+public void threewayCallExample(String firstCallId, String secondCallId) {
+  callService.createThreeWayCall(firstCallId, secondCallId,
       new OutgoingCallCreateInterface() {
         @Override
         public void callCreated(OutgoingCallInterface callInteface) {
@@ -1449,6 +2184,32 @@ public void joinSucceeded(CallInterface call) {
 public void joinFailed(CallInterface call, MobileError error) {
   //called when three way call fails
   Log.e("Call", "Threeway call failed : " + error.getErrorMessage());
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun threewayCallExample(firstCallId:String, secondCallId:String){
+        callService.createThreeWayCall(firstCallId, secondCallId , object:OutgoingCallCreateInterface{
+            override fun callCreated(callInterface: OutgoingCallInterface?) {
+                callInterface?.establishAudioCall()
+            }
+
+            override fun callCreationFailed(error: MobileError?) {
+                Log.e("Call", "Threeway Call failed : " + error?.errorMessage)
+            }
+        })
+    }
+
+override fun joinSucceeded(call: CallInterface?) {
+        //called when three way call succeeds
+        Log.i("Call", "Threeway call is OK")
+}
+
+override fun joinFailed(call: CallInterface?, error: MobileError?) {
+        //called when three way call fails
+        Log.e("Call", "Threeway call failed : " + error?.errorMessage)
 }
 ```
 <!-- tabs:end -->
@@ -1487,6 +2248,25 @@ public void transferCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "Transfer failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun blindTransferExample(call: CallInterface) {
+        val transferAddress = "user@domain"
+        call.transferCall(transferAddress)
+}
+
+override fun transferCallSucceed(call: CallInterface?) {
+        //called when transfer succeeds
+        Log.i("Call", "Transfer is OK")
+}
+
+override fun transferCallFailed(call: CallInterface?, error: MobileError?) {
+        //called when transfer fails
+        Log.e("Call", "Transfer failed : " + error?.errorMessage)
+}
+```
 <!-- tabs:end -->
 
 When the callee receives the call notification, they may use the getCallerAddress method to receive the name of the person being transferred to them. Once the callee accepts the call, the transferred user may use the getCalleeAddress method to get the name of the person to whom they were transferred.
@@ -1521,6 +2301,25 @@ public void transferCallFailed(CallInterface call, MobileError error) {
   Log.e("Call", "Transfer failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun consultativeTransferExample(call:CallInterface, target:CallInterface){
+        //both calls (call and target) should be on HOLD state before the transfer operation
+        call.consultativeTransfer(target)
+}
+
+override fun transferCallSucceed(call: CallInterface?) {
+        //called when transfer succeeds
+        Log.i("Call", "Transfer is OK")
+}
+
+override fun transferCallFailed(call: CallInterface?, error: MobileError?) {
+        //called when transfer fails
+        Log.e("Call", "Transfer failed : " + error?.errorMessage)
+}
+```
 <!-- tabs:end -->
 
 #### Change default camera device (front or back)
@@ -1544,6 +2343,16 @@ Configuration.getInstance().setDefaultCameraMode(CameraInfo.CAMERA_FACING_FRONT)
 
 // To set back camera
 Configuration.getInstance().setDefaultCameraMode(CameraInfo.CAMERA_FACING_BACK);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+// To set front camera
+Configuration.getInstance().defaultCameraMode = Camera.CameraInfo.CAMERA_FACING_FRONT
+
+// To set back camera        
+Configuration.getInstance().defaultCameraMode = Camera.CameraInfo.CAMERA_FACING_BACK
 ```
 <!-- tabs:end -->
 
@@ -1579,6 +2388,20 @@ public class CallActivity extends Activity {
     }
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class CallActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Configuration.getInstance().orientationMode = OrientationMode.CAMERA_ORIENTATION_USES_NONE
+    }
+    private fun changeOrientationToLandscape() {
+        CallService.getInstance().rotateCameraOrientationToPosition(ScreenOrientation.LANDSCAPE)
+    }
+}
+```
 <!-- tabs:end -->
 
 #### Change local video resolution or camera position
@@ -1597,7 +2420,8 @@ public void changeVideoResolutionAndPosition (){
     List<Camera.Size> supportedVideoSizes  = camera.getParameters().getSupportedVideoSizes();
     camera.release();
 
-    currentCall.setCaptureDevice(CameraInfo.CAMERA_FACING_FRONT , supportedVideoSizes.get(0) , new ProcessListener() {
+    if(currentCall != null){
+        currentCall.setCaptureDevice(CameraInfo.CAMERA_FACING_FRONT , supportedVideoSizes.get(0) , new ProcessListener() {
         @Override
         public void onSuccess() {
             Log.i("Device Capture" , "setting capture device succeeded");
@@ -1615,6 +2439,36 @@ public void changeVideoResolutionAndPosition (){
             }
         }
     });
+}
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun changeVideoResolutionAndPosition () {
+        val camera = Camera.open()
+        val supportedVideoSizes = camera.parameters.supportedVideoSizes
+        camera.release()
+
+        currentCall?.setCaptureDevice(Camera.CameraInfo.CAMERA_FACING_FRONT, supportedVideoSizes[0], object:ProcessListener{
+            override fun onSuccess() {
+                Log.i("Device Capture" , "setting capture device succeeded")
+            }
+
+            override fun onFailed(error: MobileError?) {
+                if (error?.errorCode == Constants.ErrorCodes.WEBRTC_FAILURE){
+                    Log.e("Device Capture" , "setting capture device position failed, error explanation : "
+                            + error.errorMessage
+                    )
+                }
+                else {
+                    Log.e("Video Resolution" , "video resolution cannot be set, error explanation : "
+                            + error?.errorMessage
+                    )
+            }
+        }
+    })
 }
 ```
 <!-- tabs:end -->
@@ -1634,13 +2488,29 @@ The Mobile SDK supports sending Dual-Tone Multi-Frequency (DTMF) signals to an I
 ```java
 public interface CallInterface {
 
-  // other method definitions for CallInterface
+  …
 
   // Send Dual Tone Multi Frequency Signal.
   // tone: character value of DTMF
-  public void sendDTMF(char tone);
+  public boolean sendDTMF(char tone);
 
-  // other method definitions for CallInterface
+  …
+
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+interface CallInterface {
+
+…
+
+// Send Dual Tone Multi Frequency Signal.
+// tone: character value of DTMF
+fun sendDTMF(tone: Char) : Boolean
+
+…
 
 }
 ```
@@ -1655,6 +2525,14 @@ public interface CallInterface {
 ```java
 public void sendDTMFExample(CallInterface call, char tone) {
   call.sendDTMF(tone);
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun sendDTMFExample(call: CallInterface, tone: Char){
+    call.sendDTMF(tone)
 }
 ```
 <!-- tabs:end -->
@@ -1679,6 +2557,16 @@ boolean remoteVideo = currentMediaAttributes.getRemoteVideo();
 float remoteVideoAspectRatio = currentMediaAttributes.getRemoteVideoAspectRatio();
 float localVideoAspectRatio = currentMediaAttributes.getLocalVideoAspectRatio();
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val currentMediaAttributes = call?.mediaAttributes
+val localVideo = currentMediaAttributes?.localVideo
+val remoteVideo = currentMediaAttributes?.remoteVideo
+val remoteVideoAspectRatio = currentMediaAttributes?.remoteVideoAspectRatio
+val localVideoAspectRatio = currentMediaAttributes?.localVideoAspectRatio
+```
 <!-- tabs:end -->
 
 ###### Example: Getting remote and local aspect ratios
@@ -1692,6 +2580,15 @@ float localVideoAspectRatio = currentMediaAttributes.getLocalVideoAspectRatio();
 public void mediaAttributesChanged(CallInterface callInterface, MediaAttributes mediaAttributes) {
     float remoteVideoAspectRatio = mediaAttributes.getRemoteVideoAspectRatio();
     float localVideoAspectRatio = mediaAttributes.getLocalVideoAspectRatio();
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun mediaAttributesChanged(call: CallInterface?, mediaAttributes: MediaAttributes) {
+        val remoteVideoAspectRatio = mediaAttributes.remoteVideoAspectRatio
+        val localVideoAspectRatio = mediaAttributes.localVideoAspectRatio
 }
 ```
 <!-- tabs:end -->
@@ -1729,6 +2626,20 @@ public void callWithCustomHeadersExample(String terminatorAddress, boolean video
     });
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun callWithCustomHeadersExample(terminatorAddress: String?, videoEnabled: Boolean, customParameters: Map<String?, String?>?) {
+        callService.createOutgoingCall(terminatorAddress, object : OutgoingCallCreateInterface {
+            override fun callCreated(callInterface: OutgoingCallInterface?) {
+                callInterface?.establishCall(videoEnabled, customParameters)
+            }
+
+            override fun callCreationFailed(error: MobileError?) {}
+        })
+    }
+```
 <!-- tabs:end -->
 
 ###### Example: Setting Custom Parameters during the call
@@ -1744,6 +2655,14 @@ public void setParametersToCall(CallInterface call, Map<String, String> customPa
     call.setCustomParameters(customParameters);
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun setParametersToCall(call: CallInterface, customParameters: Map<String?, String?>?) {
+        call.customParameters = customParameters
+}
+```
 <!-- tabs:end -->
 
 ###### Example: Sending Custom Parameters during the call
@@ -1757,6 +2676,14 @@ After setting custom parameters, instead of waiting next mid-call event, custom 
 ```java
 public void sendParametersToCall(CallInterface call, Map<String, String> customParameters) {
     call.sendCustomParameters(customParameters);
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun sendParametersToCall(call: CallInterface, customParameters: Map<String?, String?>?) {
+        call.sendCustomParameters(customParameters)
 }
 ```
 <!-- tabs:end -->
@@ -1785,6 +2712,12 @@ Both parties must support Trickle ICE; Half Trickle is not supported in this imp
 ```java
 Configuration.getInstance().setICEOption(ICEOptions.ICE_TRICKLE);
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+Configuration.getInstance().setIceOption(ICEOptions.ICE_TRICKLE)
+```
 <!-- tabs:end -->
 
 #### Ringing feedback
@@ -1803,6 +2736,14 @@ When ringing feedback is disabled, SPiDR/Kandy Link sends the Ringing notificati
 String supportedCallFeatures[] = { Constants.SupportedCallFeatures.RINGING_FEEDBACK.toString() };
 
 Configuration.getInstance().setSupportedCallFeatures(supportedCallFeatures);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val supportedCallFeatures = arrayOf(Constants.SupportedCallFeatures.RINGING_FEEDBACK.toString())
+
+Configuration.getInstance().supportedCallFeatures = supportedCallFeatures
 ```
 <!-- tabs:end -->
 
@@ -1830,6 +2771,24 @@ public void ringingFeedbackFailed(IncomingCallInterface call, MobileError error)
   Log.e("Call", "Send ringing feedback failed : " + error.getErrorMessage());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun incomingCall(call: IncomingCallInterface?) {
+     call?.sendRingingFeedback()
+     // Perform actions related to the incoming call
+     // such as display alert for incoming call
+} 
+
+override fun ringingFeedbackSucceeded(call: IncomingCallInterface?) {
+        Log.i("Call", "Send ringing feedback succeeded")
+}
+
+override fun ringingFeedbackFailed(call: IncomingCallInterface?, error: MobileError?) {
+        Log.e("Call", "Send ringing feedback failed : " + error?.errorMessage)
+}
+```
 <!-- tabs:end -->
 
 #### Early media
@@ -1848,6 +2807,14 @@ To support early media, feature should be added to `supportedCallFeatures` befor
 String supportedCallFeatures[] = { Constants.SupportedCallFeatures.EARLY_MEDIA.toString() };
 
 Configuration.getInstance().setSupportedCallFeatures(supportedCallFeatures);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val supportedCallFeatures = arrayOf(Constants.SupportedCallFeatures.EARLY_MEDIA.toString())
+       
+Configuration.getInstance().supportedCallFeatures = supportedCallFeatures
 ```
 <!-- tabs:end -->
 
@@ -1877,8 +2844,31 @@ public void callStatusChanged(CallInterface callInterface, CallState callState) 
     default:
       break;
     }
-    callState = callState.getType();
+    this.callState = callState.getType();
 }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+private var callState = CallState.Type.UNKNOWN
+…
+override fun callStatusChanged(callInterface: CallInterface, callState: CallState) {
+when (callState.type) {
+            CallState.Type.SESSION_PROGRESS -> Log.i("Call", "Call is in early media state")
+
+            CallState.Type.RINGING ->
+                 if (callState == CallState.Type.SESSION_PROGRESS) {
+                Log.i("Call", "Ignoring ringing state")
+                 }
+                 else{
+                     Log.i("Call", "Call is in ringing state");
+                 }
+            else -> {
+                }
+            this.callState = callState.type
+}    
+
 ```
 <!-- tabs:end -->
 
@@ -1909,6 +2899,19 @@ preferredCodecSet.setVideoCodecs(videoCodecs);
 
 Configuration.getInstance().setPreferredCodecSet(preferredCodecSet);
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val preferredCodecSet = CodecSet()
+val audioCodecs = arrayOf(CodecSet.AudioCodecType.AC_G722, CodecSet.AudioCodecType.AC_PCMA, CodecSet.AudioCodecType.AC_PCMU)
+preferredCodecSet.setAudioCodecs(audioCodecs)
+
+val videoCodecs = arrayOf(CodecSet.VideoCodecType.VC_VP8)
+preferredCodecSet.setVideoCodecs(videoCodecs)
+
+Configuration.getInstance().preferredCodecSet = preferredCodecSet
+```
 <!-- tabs:end -->
 
 Or
@@ -1922,6 +2925,15 @@ AudioCodecType audioCodecs[] = {AudioCodecType.AC_G722, AudioCodecType.AC_PCMA, 
 VideoCodecType videoCodecs[] = {VideoCodecType.VC_VP8};
 CodecSet preferredCodecSet = new CodecSet(audioCodecs, videoCodecs);
 Configuration.getInstance().setPreferredCodecSet(preferredCodecSet);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val audioCodecs = arrayOf(CodecSet.AudioCodecType.AC_G722, CodecSet.AudioCodecType.AC_PCMA, CodecSet.AudioCodecType.AC_PCMU)
+val videoCodecs = arrayOf(CodecSet.VideoCodecType.VC_VP8)
+val preferredCodecSet = CodecSet(audioCodecs,videoCodecs)
+Configuration.getInstance().preferredCodecSet = preferredCodecSet
 ```
 <!-- tabs:end -->
 
@@ -1969,6 +2981,27 @@ try {
 } catch (MobileException ex) {
   //handle exception
 }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+try {
+    val codecsToReplace = arrayListOf<CodecToReplace>()
+            
+    codecsToReplace.add(CodecToReplace.create("telephone-event/8000", "101"))
+    codecsToReplace.add(CodecToReplace.create("opus/48000/2", "114"))
+    codecsToReplace.add(CodecToReplace.create("VP8/90000", "100"))
+
+    val customProperties = hashMapOf<String, String>()
+    customProperties["profile-level-id"] = "42e01f"
+    customProperties["packetization-mode"] = "1"
+    codecsToReplace.add(CodecToReplace.create("H264/90000", "120", customProperties))
+
+    Configuration.getInstance().replaceCodecSet = codecsToReplace
+    } catch (ex: MobileException){
+      //handle exception
+    }
 ```
 <!-- tabs:end -->
 
@@ -2350,7 +3383,17 @@ int audioReceiveBandwidth = 300;
 int videoReceiveBandwidth = 1000;
 
 CallReceiveBandwidthLimit bandwidthLimit =  new CallReceiveBandwidthLimit(audioReceiveBandwidth , videoReceiveBandwidth);
-Configuration.getInstance.setReceiveBandwidthLimit(bandwidthLimit);
+Configuration.getInstance.setReceiveVideoBandwidth(bandwidthLimit);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val audioReceiveBandwidth = 300
+val videoReceiveBandwidth = 1000
+
+val bandwidthLimit = CallReceiveBandwidthLimit(audioReceiveBandwidth, videoReceiveBandwidth)
+Configuration.getInstance().setReceiveVideoBandwidth(bandwidthLimit)
 ```
 <!-- tabs:end -->
 
@@ -2390,6 +3433,17 @@ CallReceiveBandwidthLimit bandwidthLimit =  new CallReceiveBandwidthLimit();
 bandwidthLimit.setVideoReceiveBandwidth(videoReceiveBandwidth);
 
 Configuration.getInstance.setReceiveBandwidthLimit(bandwidthLimit);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val videoReceiveBandwidth = 1000
+
+val bandwidthLimit = CallReceiveBandwidthLimit()
+bandwidthLimit.videoReceiveBandwidth = videoReceiveBandwidth
+
+Configuration.getInstance().setReceiveVideoBandwidth(bandwidthLimit)
 ```
 <!-- tabs:end -->
 
@@ -2458,6 +3512,13 @@ The following shows different audio bandwidth usage configuration examples. If a
 AudioCodecConfiguration config = new AudioCodecConfiguration(AudioCodecConfiguration.DefaultConfigurationType.MOBILESDK_PREFERRED_SET);
 Configuration.getInstance().setAudioCodecConfigurations(config);
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+val config = AudioCodecConfiguration(AudioCodecConfiguration.DefaultConfigurationType.MOBILESDK_PREFERRED_SET)
+Configuration.getInstance().setAudioCodecConfigurations(config)
+```
 <!-- tabs:end -->
 
 ###### Example: Use the Mobile SDK preferred set with changes
@@ -2471,6 +3532,15 @@ AudioCodecConfiguration config = new AudioCodecConfiguration(AudioCodecConfigura
 config.setOpusMaxAverageBitRate(25000);
 config.setOpusMaxPlaybackRate(24000);
 Configuration.getInstance().setAudioCodecConfigurations(config);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val config = AudioCodecConfiguration(AudioCodecConfiguration.DefaultConfigurationType.MOBILESDK_PREFERRED_SET)
+config.opusMaxAverageBitRate = 25000
+config.opusMaxPlaybackRate = 24000
+Configuration.getInstance().setAudioCodecConfigurations(config)
 ```
 <!-- tabs:end -->
 
@@ -2488,6 +3558,18 @@ config.setOpusDtx(true);
 config.setOpusFec(true);
 config.setPtime(40);
 Configuration.getInstance().setAudioCodecConfigurations(config);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val config = AudioCodecConfiguration(AudioCodecConfiguration.DefaultConfigurationType.WEBRTC_DEFAULT_SET)
+config.opusMaxAverageBitRate = 25000
+config.opusMaxPlaybackRate = 24000
+config.opusDtx = true
+config.opusFec = true
+config.ptime = 40
+Configuration.getInstance().setAudioCodecConfigurations(config)
 ```
 <!-- tabs:end -->
 
@@ -2513,6 +3595,14 @@ Applications can listen for internal error notifications between the Mobile SDK 
 @Override
 public void onInternalError(MobileError error) {
     Log.e("OnInternalError", "errorCode:" + error.getErrorCode() + " ,errorMessage:" + error.getErrorMessage());
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun onInternalError(error: MobileError?) {
+    Log.e("OnInternalError", "errorCode:" + error?.errorCode + " ,errorMessage:" + error?.errorMessage)
 }
 ```
 <!-- tabs:end -->
@@ -2586,6 +3676,32 @@ private void callAdditionalInfoChanged (CallInterface call, Map<String, String> 
     Log.i("Call", "Detailed info is " + sb.toString());
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+override fun callAdditionalInfoChanged(call: CallInterface?, events: MutableMap<String, String>?) {
+        val time: Long? = (events?.get("time")?.toLong())
+        val action = events?.get("action")
+        val type = events?.get("type")
+        val callId = call?.callId
+
+        if (type.equals(AdditionalInfoConstants.INCOMING_CALL)){
+            if (time != null) {
+                callCreateTime = time
+            }
+        }
+        val delay = time?.minus(callCreateTime)
+        Log.i("Call", "Time from creating call until " + type + " is " + delay + "for callId" + callId )
+
+        val sb = StringBuilder("{")
+        for ((key, value) in events!!.entries) {
+            sb.append(key).append(":").append(value).append(",\n")
+        }
+        sb.append("}");
+        Log.i("Call", "Detailed info is $sb")
+    }
+```
 <!-- tabs:end -->
 
 #### Retrieve audio and video RTP/RTCP statistics
@@ -2656,6 +3772,19 @@ currentCall.getRTPStatistics(new RTPStatisticHandler() {
     }
 });
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+currentCall?.getRTPStatistics {
+            val statistic = it[0]
+
+            Log.i("Call", "Report id : " +statistic.id)
+            Log.i("Call", "Report type : " +statistic.type)
+            Log.i("Call", "Report timestamp : " +statistic.timestamp)
+            Log.i("Call", "Report values : " +statistic.values)
+        }
+```
 <!-- tabs:end -->
 
 For a full example of the data received, see [Appendix E: Examples of call statistic data](#appendix-e-examples-of-call-statistic-data).
@@ -2687,7 +3816,7 @@ To be able to receive push notifications, applications must subscribe to push ch
 #### ** Java Code **
 
 ```java
-public class PushModule extends FirebaseInstanceIdService implements PushSubscriptionListener {
+public class PushModule extends FirebaseMessagingService implements PushSubscriptionListener {
 
   public void subscribe() {
         URL pushServerURL = // set URL of the CPaaS Push server
@@ -2698,7 +3827,13 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
         PushServiceInterface pushService = ServiceProvider.getPushService();
 
         String packageName = // package name of the application which is defined by Firebase
-        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+        String deviceToken;
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this,  new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+               deviceToken = instanceIdResult.getToken();
+     }
+ });
         String realm = "default"; //realm of the push service
 
         try {
@@ -2720,6 +3855,44 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
     ...
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class PushModule : FirebaseMessagingService() , PushSubscriptionListener {
+    fun subscribe(){
+        val pushServerURL = URL("URL of the CPaaS Push server")
+        // pushServerURL configuration must be set before using the push subscription API
+        Configuration.getInstance().pushServerURL = pushServerURL
+
+        val serviceProvider = ServiceProvider.getInstance(applicationContext)
+        val pushService = serviceProvider.pushService
+
+        val packageName = // package name of the application which is defined by Firebase
+        var deviceToken : String = ""
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener(this) { instanceIdResult ->
+                 deviceToken = instanceIdResult.token
+    }
+        val realm = "default" //realm of the push service
+
+        try {
+            pushService.subscribeToPushNotifications(packageName, deviceToken, realm, object:PushSubscriptionCallback{
+                override fun onSuccess(subscriptionID: String?) {
+                    // save this subscriptionID to use later
+                }
+
+                override fun onFail(error: MobileError?) {
+                    // handle error case
+                }
+
+            })
+        } catch (e: MobileException){
+            // handle error case
+        }
+    }
+    ...
+}    
+```
 <!-- tabs:end -->
 
 ### Updating Push Subscription
@@ -2733,7 +3906,7 @@ The OS can update the device token in some cases. The new device token must be u
 #### ** Java Code **
 
 ```java
-public class PushModule extends FirebaseInstanceIdService implements PushSubscriptionListener {
+public class PushModule extends FirebaseMessagingService implements PushSubscriptionListener {
     ...
 
     @Override
@@ -2744,7 +3917,13 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
         PushServiceInterface pushService = ServiceProvider.getPushService();
 
         String packageName = // package name of the application which is defined by Firebase
-        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+        String deviceToken;
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this,  new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+               deviceToken = instanceIdResult.getToken();
+     }
+ });
         String subscriptionID = // get the saved subscription ID
 
         try {
@@ -2766,6 +3945,41 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
     ...
 }
 ```
+
+#### ** Kotlin Code **
+
+```kotlin
+class PushModule : FirebaseMessagingService() , PushSubscriptionListener {
+override fun onNewToken(token: String?) {
+        super.onNewToken(token)
+
+        val serviceProvider = ServiceProvider.getInstance(applicationContext)
+        val pushService = serviceProvider.pushService
+
+        val packageName = // package name of the application which is defined by Firebase
+        var deviceToken : String = ""
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener(this) { instanceIdResult ->
+            deviceToken = instanceIdResult.token
+    }
+        val subscriptionID = // get the saved subscription ID
+
+    try {
+            pushService.updatePushSubscription(packageName, deviceToken, subscriptionID, object:PushUpdateSubscriptionCallback{
+                override fun onSuccess() {
+                    // handle success case
+                }
+
+                override fun onFail(p0: MobileError?) {
+                    // handle error case
+                }
+
+            } )
+        } catch (e: MobileException){
+            // handle error case
+        }
+    ...    
+}    
+```
 <!-- tabs:end -->
 
 ### Removing Push Subscription
@@ -2779,7 +3993,7 @@ To stop receiving push notifications, client should remove the push subscription
 #### ** Java Code **
 
 ```java
-public class PushModule extends FirebaseInstanceIdService implements PushSubscriptionListener {
+public class PushModule extends FirebaseMessagingService implements PushSubscriptionListener {
     ...
 
     public void unsubscribe() {
@@ -2802,6 +4016,32 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
     }
     ...
 }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+class PushModule : FirebaseMessagingService() , PushSubscriptionListener {
+    ...
+
+fun unsubscribe(){
+        val serviceProvider = ServiceProvider.getInstance(applicationContext)
+        val pushService = serviceProvider.pushService
+
+        val subscriptionID = // get the saved subscription ID
+        pushService.unsubscribeFromPushNotifications(subscriptionID, object:PushUnsubscriptionCallback{
+            override fun onSuccess() {
+                // handle success case
+            }
+
+            override fun onFail(error: MobileError?) {
+                // handle error case
+            }
+
+        })
+    }
+    ...
+}    
 ```
 <!-- tabs:end -->
 
@@ -2845,7 +4085,7 @@ public class PushReceiver extends FirebaseMessagingService {
                     pushService.injectPushMessage(pushData);
                 } else {
                     Constants.SubscribeServices[] services = {Constants.SubscribeServices.Call};
-                    regService.registerToServer(service, 3600, new OnCompletionListener() {
+                    regService.registerToServer(services, 3600, new OnCompletionListener() {
                         @Override
                         public void onSuccess() {
                             pushService.injectPushMessage(pushData);
@@ -2865,6 +4105,54 @@ public class PushReceiver extends FirebaseMessagingService {
         }
     }
 }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+class PushReceiver : FirebaseMessagingService(){
+
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
+        //  IMPORTANT NOTE : At this stage, application might be woken up by push notification.
+        // Developers need to make sure Mobile SDK Configurations are set and Mobile SDK is initialized before going further
+
+        val pushData = remoteMessage.data
+
+    try{
+        // all MobileSDK push notifications starts with "notificationMessage" key, you can use it to filter your notificaitons
+        if(pushData.containsKey("notificationMessage")){
+            val serviceProvider = ServiceProvider.getInstance(applicationContext)
+            val regService = serviceProvider.registrationService
+            val pushService = serviceProvider.pushService
+
+            val alreadyRegistered = registrationService.registrationState == RegistrationStates.REGISTERED
+
+            if(alreadyRegistered){
+                pushService.injectPushMessage(pushData)
+            } else {
+                val services = arrayOf(Constants.SubscribeServices.Call)
+                regService.registerToServer(services, 3600, object:OnCompletionListener{
+            override fun onSuccess() {
+                pushService.injectPushMessage(pushData)
+            }
+
+            override fun onFail(error: MobileError?) {
+                //Handle error case
+            }
+        })
+      }
+
+
+    } else {
+            // push notification can be application specific, application should process it
+        }
+    } catch (e: MobileException){
+        // handle error case
+    }
+        
+    }
+}    
 ```
 <!-- tabs:end -->
 
@@ -2886,6 +4174,21 @@ public class PushModule extends FirebaseInstanceIdService implements PushSubscri
 
     @Override
     public void pushSubscriptionInvalidated(String subscriptionID) {
+        //  push subscription which has given subscriptionID is invalidated by the server,
+        // client needs to re-subscribe to push channel. No more push notifications will be received
+        // until client subscribes to push service again.
+    }
+    ...
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+class PushModule : FirebaseMessagingService, PushSubscriptionListener {
+    ...
+
+    override fun pushSubscriptionInvalidated(subscriptionID: String?) {
         //  push subscription which has given subscriptionID is invalidated by the server,
         // client needs to re-subscribe to push channel. No more push notifications will be received
         // until client subscribes to push service again.
@@ -3020,7 +4323,7 @@ public class Demo {
 
         configuration.setICEServers(iceServers);
 
-        //Integer value in seconds to limit the ICE collection duration. Default is 0 (no timeout)
+        //Integer value in seconds to limit the ICE collection duration. Default is 10.
         configuration.setICECollectionTimeout(4);
 
         //Set supported call features (early media and/or ringing feedback)
@@ -3034,6 +4337,64 @@ public class Demo {
         // Audit Configuration. Default is enabled and 30 secs.
         configuration.setAuditEnabled(true);
         configuration.setAuditFrequence(30);
+    }
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+class Demo {
+    fun configurationExample(){
+        //Configuration.getInstance is used to access the static Configuration instance
+        //Access Configuration values through Java Beans getter/setter approach
+        val configuration = Configuration.getInstance()
+
+        //user name for authorization (minimum Configuration item setting)
+        configuration.username = "username"
+        //password for authorization
+        configuration.password = "password"
+        //server IP value for SPiDR
+        configuration.restServerIp = "$SUBSCRIPTIONFQDN$"
+        //server port value for SPiDR
+        configuration.restServerPort = 443
+        //logger implementation defined by the application
+        configuration.logger = DefaultLogUtility()
+        //HTTP or HTTPS while accessing REST server
+        configuration.requestHttpProtocol = false
+
+        //connection type for notification
+        configuration.notificationType = Constants.NotificationType.WebSocket
+        //IP used in websocket connection creation
+        configuration.webSocketServerIp = "$WEBSOCKETFQDN$";
+        //port used in websocket connection creation
+        configuration.webSocketServerPort = 443;
+        //set to WS or WSS protocol
+        configuration.securedWSProtocol = true;
+
+        // SPiDR/Kandy Link TURN server in WebRTC's peer connection
+        val iceServers = ICEServers()
+        iceServers.addICEServer("$TURNSERVER1$")
+        iceServers.addICEServer("$TURNSERVER2$")
+        iceServers.addICEServer("$STUNSERVER1$")
+        iceServers.addICEServer("$STUNSERVER2$")
+        configuration.iceServers = iceServers
+        
+
+        //Integer value in seconds to limit the ICE collection duration. Default is 10.
+        configuration.iceCollectionTimeout = 4
+
+        //Set supported call features (early media and/or ringing feedback)
+        //SPiDR server must support these features
+        configuration.supportedCallFeatures = arrayOf(Constants.SupportedCallFeatures.EARLY_MEDIA.toString()) 
+
+        //Set one of the ice candidate negotiation types (ICE_VANILLA or ICE_TRICKLE)
+        //The default is ICE_VANILLA
+        configuration.setIceOption(ICEOptions.ICE_TRICKLE)
+
+        // Audit Configuration. Default is enabled and 30 secs.
+        configuration.isAuditEnabled = true
+        configuration.auditFrequence = 30
     }
 }
 ```
