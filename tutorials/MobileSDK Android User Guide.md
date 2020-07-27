@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **July 3 , 2020**
+Revision Date: **July 22, 2020**
 
 ## Mobile SDK overview
 
@@ -142,6 +142,23 @@ android{
 ```
 
 ![alt text](images/get_started_9.png "")
+
+### Suggested Config for Publishing APK on Google Play Store
+
+For publishing your app in Google Play Store, correct architecture of CPUs must be included your APK. For that reason, open root level **build.gradle** file and add this gradle config.
+
+```groovy
+android {
+    buildTypes {
+        debug {
+            ndk { abiFilters "x86", "arm64-v8a", "armeabi-v7a" }
+        }
+        release {
+            ndk { abiFilters "arm64-v8a", "armeabi-v7a" }
+        }
+    }
+}
+```
 
 ### Use the Mobile SDK in your Android project
 
