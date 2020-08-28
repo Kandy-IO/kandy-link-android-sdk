@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **July 22, 2020**
+Revision Date: **August 28, 2020**
 
 ## Mobile SDK overview
 
@@ -347,7 +347,6 @@ public void register() {
     registrationService.setRegistrationApplicationListener(registrationListener);
     //Service types used in registration
     Constants.SubscribeServices[] subscribeServices = {Constants.SubscribeServices.Call,
-            Constants.SubscribeServices.Presence,
             Constants.SubscribeServices.IM};
     registrationService.registerToServer(subscribeServices, 3600, new OnCompletionListener() {
         @Override
@@ -389,8 +388,7 @@ fun register(){
         registrationService.setRegistrationApplicationListener(registrationListener)
         //Service types used in registration
         val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
-            Constants.SubscribeServices.IM,
-            Constants.SubscribeServices.Presence)
+            Constants.SubscribeServices.IM,)
         registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
             override fun onSuccess() {
                 //Handle registration success
@@ -861,7 +859,7 @@ public class LogUtilityExample implements LoggingInterface {
             Log.e(tag, message);
         } else if(loglevel == LogLevel.WARNING) {
             Log.w(tag, message);
-        } else if(loglevel == LogLevel.INFO) {
+        } else if(loglevel == LogLevel.TRACE) {
             Log.i(tag, message);
         } else {
             Log.d(tag, message);
@@ -880,7 +878,7 @@ class LogUtilityExample : LoggingInterface {
             Log.e(tag, message)
         } else if(loglevel == Constants.LogLevel.WARNING) {
             Log.w(tag, message)
-        } else if(loglevel == Constants.LogLevel.INFO) {
+        } else if(loglevel == Constants.LogLevel.TRACE) {
             Log.i(tag, message)
         } else {
             Log.d(tag, message)
@@ -899,7 +897,7 @@ class LogUtilityExample : LoggingInterface {
 ```java
 public void initializeAndUseLogger() {
 	Configuration.getInstance().setLogger(new LogUtilityExample());
-	LogManager.log(LogLevel.INFO, "Test", "logger is initialized");
+	LogManager.log(LogLevel.TRACE, "Test", "logger is initialized");
 }
 ```
 
@@ -908,10 +906,12 @@ public void initializeAndUseLogger() {
 ```kotlin
 fun initializeAndUseLogger(){
         Configuration.getInstance().logger = LogUtilityExample()
-        LogManager.log(Constants.LogLevel.INFO,"Test","logger is initialized")
+        LogManager.log(Constants.LogLevel.TRACE,"Test","logger is initialized")
     }
 ```
 <!-- tabs:end -->
+
+Our recommendation is to store the logs in memory and provide the ability to send them log file over email to our support team if issues are encountered.
 
 <div class="page-break"></div>
 
@@ -953,7 +953,6 @@ final RegistrationService registrationService
 registrationService.setRegistrationApplicationListener(registrationListener);
 //Service types used in registration
 SubscribeServices[] subscribeServices = {SubscribeServices.Call,
-        SubscribeServices.Presence,
         SubscribeServices.IM};
 registrationService.registerToServer(subscribeServices, 3600,
         new OnCompletionListener() {
@@ -988,7 +987,6 @@ val registrationService = ServiceProvider.getInstance(applicationContext).regist
         registrationService.setRegistrationApplicationListener(registrationListener)
         //Service types used in registration
         val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
-            Constants.SubscribeServices.Presence,
             Constants.SubscribeServices.IM)
         registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
             override fun onSuccess() {
@@ -1094,7 +1092,6 @@ Configuration.getInstance().setPassword("password");
 registrationService.setRegistrationApplicationListener(registrationListener);
 //Service types used in registration
 SubscribeServices[] subscribeServices = {SubscribeServices.Call,
-        SubscribeServices.Presence,
         SubscribeServices.IM};
 registrationService.registerToServer(subscribeServices, 3600,
         new OnCompletionListener() {
@@ -1124,7 +1121,6 @@ Configuration.getInstance().password = "password"
         registrationService.setRegistrationApplicationListener(registrationListener)
         //Service types used in registration
         val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
-            Constants.SubscribeServices.Presence,
             Constants.SubscribeServices.IM)
         registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
             override fun onSuccess() {
