@@ -94,7 +94,7 @@ allprojects {
 2. Add dependency of MobileSDK to your app level **build.gradle** file.
 
 ```groovy
-implementation 'com.kandy.mobile:kandylinkmobilesdk:$SDK_VERSION$'
+implementation 'com.kandy.mobile:kandylinkmobilesdk:$SDK_VERSION$ '
 ```
 
 ![alt text](images/get_started_5.png "")
