@@ -2,7 +2,6 @@
 Version Number: **$SDK_VERSION$**
 <br>
 Revision Date: **December 02, 2020**
-
 ## Mobile SDK overview
 
 The SPiDR/Kandy Link Mobile Software Development Kit (SDK) defines a library implementation supporting SPiDR platform features like registration, notification, call management, instant message, presence management, and WebRTC on Android. You can use this library implementation to integrate SPiDR/Kandy Link services and WebRTC into your native mobile applications to create new, innovative user experiences.
@@ -4135,7 +4134,7 @@ If there is a bandwidth or CPU limitation, WebRTC will decrease video resolution
 
 
 ###### Example: Retrieving statistics
-
+It is recommended to call this method every 10 seconds as long as call continues.
 <!-- tabs:start -->
 
 #### ** Java Code **
