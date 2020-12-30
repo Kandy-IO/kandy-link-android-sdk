@@ -1,7 +1,8 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **December 02, 2020**
+Revision Date: **December 30, 2020**
+
 ## Mobile SDK overview
 
 The SPiDR/Kandy Link Mobile Software Development Kit (SDK) defines a library implementation supporting SPiDR platform features like registration, notification, call management, instant message, presence management, and WebRTC on Android. You can use this library implementation to integrate SPiDR/Kandy Link services and WebRTC into your native mobile applications to create new, innovative user experiences.
@@ -261,7 +262,6 @@ public void configExample() {
     configuration.setPassword("password");
     configuration.setRestServerIp("$SUBSCRIPTIONFQDN$");
     configuration.setRestServerPort(443);
-    configuration.setRequestHttpProtocol(false);
 
     ICEServers iceServers = new ICEServers();
     iceServers.addICEServer("$TURNSERVER1$");
@@ -272,7 +272,6 @@ public void configExample() {
 
     configuration.setWebSocketServerIp("$WEBSOCKETFQDN$");
     configuration.setWebSocketServerPort(443);
-    configuration.setSecuredWSProtocol(true);
 }
 ```
 #### ** Kotlin Code **
@@ -284,7 +283,6 @@ fun configExample(){
         configuration.password = "password"
         configuration.restServerIp = "SUBSCRIPTIONFQDN$"
         configuration.restServerPort = 443
-        configuration.requestHttpProtocol = false
 
         val iceServers = ICEServers()
         iceServers.addICEServer("$TURNSERVER1$")
@@ -295,7 +293,6 @@ fun configExample(){
 
         configuration.webSocketServerIp = "$WEBSOCKETFQDN$"
         configuration.webSocketServerPort = 443
-        configuration.securedWSProtocol = true
     }
 ```
 <!-- tabs:end -->
@@ -329,10 +326,7 @@ public void register() {
     final RegistrationService registrationService = serviceProvider.getRegistrationService();
     //Get registration notifications
     registrationService.setRegistrationApplicationListener(registrationListener);
-    //Service types used in registration
-    Constants.SubscribeServices[] subscribeServices = {Constants.SubscribeServices.Call,
-            Constants.SubscribeServices.IM};
-    registrationService.registerToServer(subscribeServices, 3600, new OnCompletionListener() {
+    registrationService.registerToServer(3600, new OnCompletionListener() {
         @Override
         public void onSuccess() {
             //Handle registration success
@@ -370,10 +364,7 @@ fun register(){
         val registrationService = serviceProvider.registrationService
         //Get registration notifications
         registrationService.setRegistrationApplicationListener(registrationListener)
-        //Service types used in registration
-        val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
-            Constants.SubscribeServices.IM,)
-        registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
+        registrationService.registerToServer(3600, object:OnCompletionListener{
             override fun onSuccess() {
                 //Handle registration success
                 //Developer can get expiration time, which is gathered from registration response
@@ -1047,9 +1038,7 @@ final RegistrationService registrationService
          = ServiceProvider.getInstance(getApplicationContext()).getRegistrationService();
 //Get registration notifications
 registrationService.setRegistrationApplicationListener(registrationListener);
-//Service types used in registration
-SubscribeServices[] subscribeServices = {SubscribeServices.Call};
-registrationService.registerToServer(subscribeServices, 3600,
+registrationService.registerToServer(3600,
         new OnCompletionListener() {
     @Override
     public void onSuccess() {
@@ -1080,9 +1069,7 @@ val registrationListener = object : RegistrationApplicationListener {
 val registrationService = ServiceProvider.getInstance(applicationContext).registrationService
         //Get registration notifications
         registrationService.setRegistrationApplicationListener(registrationListener)
-        //Service types used in registration
-        val subscribeServices = arrayOf(Constants.SubscribeServices.Call)
-        registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
+        registrationService.registerToServer(3600, object:OnCompletionListener{
             override fun onSuccess() {
                 //Handle registration success
                 //Developer can get expiration time, which is gathered from registration response
@@ -1184,10 +1171,7 @@ Configuration.getInstance().setPassword("password");
 
 //Get registration notifications
 registrationService.setRegistrationApplicationListener(registrationListener);
-//Service types used in registration
-SubscribeServices[] subscribeServices = {SubscribeServices.Call,
-        SubscribeServices.IM};
-registrationService.registerToServer(subscribeServices, 3600,
+registrationService.registerToServer(3600,
         new OnCompletionListener() {
     @Override
     public void onSuccess() {
@@ -1213,10 +1197,7 @@ Configuration.getInstance().password = "password"
 
 //Get registration notifications
         registrationService.setRegistrationApplicationListener(registrationListener)
-        //Service types used in registration
-        val subscribeServices = arrayOf(Constants.SubscribeServices.Call,
-            Constants.SubscribeServices.IM)
-        registrationService.registerToServer(subscribeServices, 3600, object:OnCompletionListener{
+        registrationService.registerToServer(3600, object:OnCompletionListener{
             override fun onSuccess() {
                 //Handle registration success
             }
@@ -2940,7 +2921,7 @@ Configuration.getInstance().setIceOption(ICEOptions.ICE_TRICKLE)
 
 #### Ringing feedback
 
-If preferred, when remote party receives an incoming call, callee can notify caller about received call by calling `sendRingingFeedback` method. To enable, `ringingFeedback` feature should be added to `supportedCallFeatures` before starting registration.
+If preferred, when remote party receives an incoming call, callee can notify caller about received call by calling `sendRingingFeedback` method. To enable, `ringingFeedback`. related Configuration parameter should be set.
 
 When ringing feedback is disabled, SPiDR/Kandy Link sends the Ringing notification to the caller immediately after sending the callStart notification to the callee.
 
@@ -2951,17 +2932,13 @@ When ringing feedback is disabled, SPiDR/Kandy Link sends the Ringing notificati
 #### ** Java Code **
 
 ```java
-String supportedCallFeatures[] = { Constants.SupportedCallFeatures.RINGING_FEEDBACK.toString() };
-
-Configuration.getInstance().setSupportedCallFeatures(supportedCallFeatures);
+Configuration.getInstance().setRingingFeedbackEnabled(true);
 ```
 
 #### ** Kotlin Code **
 
 ```kotlin
-val supportedCallFeatures = arrayOf(Constants.SupportedCallFeatures.RINGING_FEEDBACK.toString())
-
-Configuration.getInstance().supportedCallFeatures = supportedCallFeatures
+Configuration.getInstance().isRingingFeedbackEnabled = true
 ```
 <!-- tabs:end -->
 
@@ -3013,28 +2990,6 @@ override fun ringingFeedbackFailed(call: IncomingCallInterface?, error: MobileEr
 
 The Mobile SDK supports early media (for example, hearing a ringing tone or an announcement from the network instead of a local ringing tone before a call is established) and transitions to call state SESSION_PROGRESS after receiving the 183 Session Progress notification. See [Appendix B: Call state transitions](#appendix-b-call-state-transitions) for call state diagrams.
 
-To support early media, feature should be added to `supportedCallFeatures` before starting call.
-
-###### Example: Enabling early media
-
-<!-- tabs:start -->
-
-#### ** Java Code **
-
-```java
-String supportedCallFeatures[] = { Constants.SupportedCallFeatures.EARLY_MEDIA.toString() };
-
-Configuration.getInstance().setSupportedCallFeatures(supportedCallFeatures);
-```
-
-#### ** Kotlin Code **
-
-```kotlin
-val supportedCallFeatures = arrayOf(Constants.SupportedCallFeatures.EARLY_MEDIA.toString())
-       
-Configuration.getInstance().supportedCallFeatures = supportedCallFeatures
-```
-<!-- tabs:end -->
 
 ###### Example: Call in early media
 
@@ -3125,9 +3080,9 @@ Using "CodecToReplace" feature of Mobile SDK, applications can manipulate the co
 
 Note that, it is strongly recommended **not** to use this API during an ongoing call operation (e.g. mid-call events). A configuration change will affect the ongoing call and this may cause unstable WebRTC behavior.
 
-For the replacing codec payload number feature, the MobileSDK user have to create an instance of the CodecToReplace model class and set the codecDefinition (the definition of the codec that can be seen on the rtpmap in SDP, e.g. "telephone-event/8000" or "opus/48000/2") and payloadNumber (e.g. "101" or "96" etc.) parameters. After creation of CodecToReplace object(s), they should be set to Mobile SDK through `setReplaceCodecSet` API on `Configuration` class.
+For the replacing codec payload number feature, the MobileSDK user have to create an instance of the CodecToReplace model class and set the codecDefinition (the definition of the codec that can be seen on the rtpmap in SDP, e.g. "telephone-event/8000" or "opus/48000/2") and payloadNumber (e.g. "101" or "96" etc.) parameters. After creation of CodecToReplace object(s), they should be set to Mobile SDK through `setCodecPayloadTypeSet` API on `Configuration` class.
 
-After the Mobile SDK user set the ReplaceCodecSet configuration, all of the local offer call SDPs will be generated with the specified codec payload numbers and there will be no modification done on remote SDPs and local answer SDPs.
+After the Mobile SDK user set the CodecPayloadTypeSet configuration, all of the local offer call SDPs will be generated with the specified codec payload numbers and there will be no modification done on remote SDPs and local answer SDPs.
 
 <hr/>
 <h5>NOTE</h5>
@@ -3159,7 +3114,7 @@ try {
   customProperties.put("packetization-mode", "1");
   codecsToReplace.add(CodecToReplace.create("H264/90000", "120", customProperties));
 
-  Configuration.getInstance().setReplaceCodecSet(codecsToReplace);
+  Configuration.getInstance().setCodecPayloadTypeSet(codecsToReplace);
 } catch (MobileException ex) {
   //handle exception
 }
@@ -3180,7 +3135,7 @@ try {
     customProperties["packetization-mode"] = "1"
     codecsToReplace.add(CodecToReplace.create("H264/90000", "120", customProperties))
 
-    Configuration.getInstance().replaceCodecSet = codecsToReplace
+    Configuration.getInstance().codecPayloadTypeSet = codecsToReplace
     } catch (ex: MobileException){
       //handle exception
     }
@@ -4134,7 +4089,10 @@ If there is a bandwidth or CPU limitation, WebRTC will decrease video resolution
 
 
 ###### Example: Retrieving statistics
+
 It is recommended to call this method every 10 seconds as long as call continues.
+
+
 <!-- tabs:start -->
 
 #### ** Java Code **
@@ -4453,8 +4411,7 @@ public class PushReceiver extends FirebaseMessagingService {
                 if (alreadyRegistered) {
                     pushService.injectPushMessage(pushData);
                 } else {
-                    Constants.SubscribeServices[] services = {Constants.SubscribeServices.Call};
-                    regService.registerToServer(services, 3600, new OnCompletionListener() {
+                    regService.registerToServer(3600, new OnCompletionListener() {
                         @Override
                         public void onSuccess() {
                             pushService.injectPushMessage(pushData);
@@ -4500,8 +4457,7 @@ class PushReceiver : FirebaseMessagingService(){
             if(alreadyRegistered){
                 pushService.injectPushMessage(pushData)
             } else {
-                val services = arrayOf(Constants.SubscribeServices.Call)
-                regService.registerToServer(services, 3600, object:OnCompletionListener{
+                regService.registerToServer(3600, object:OnCompletionListener{
             override fun onSuccess() {
                 pushService.injectPushMessage(pushData)
             }
@@ -4671,17 +4627,11 @@ public class Demo {
         configuration.setRestServerPort(443);
         //logger implementation defined by the application
         configuration.setLogger(new DefaultLogUtility());
-        //HTTP or HTTPS while accessing REST server
-        configuration.setRequestHttpProtocol(false);
 
-        //connection type for notification
-        configuration.setNotificationType(NotificationType.WebSocket);
          //IP used in websocket connection creation
         configuration.setWebSocketServerIp("$WEBSOCKETFQDN$");
         //port used in websocket connection creation
         configuration.setWebSocketServerPort(443);
-        //set to WS or WSS protocol
-        configuration.setSecuredWSProtocol(true);
 
         // SPiDR/Kandy Link TURN server in WebRTC's peer connection
         ICEServers iceServers = new ICEServers();
@@ -4695,16 +4645,15 @@ public class Demo {
         //Integer value in seconds to limit the ICE collection duration. Default is 10.
         configuration.setICECollectionTimeout(4);
 
-        //Set supported call features (early media and/or ringing feedback)
-        //SPiDR server must support these features
-        configuration.setSupportedCallFeatures(new String[] { Constants.SupportedCallFeatures.EARLY_MEDIA.toString() });
+        //Set supported call features (ringing feedback)
+        //SPiDR server must support this feature
+        configuration.setRingingFeedbackEnabled(true);
 
         //Set one of the ice candidate negotiation types (ICE_VANILLA or ICE_TRICKLE)
         //The default is ICE_VANILLA
         configuration.setIceOption(ICEOptions.ICE_TRICKLE);
 
         // Audit Configuration. Default is enabled and 30 secs.
-        configuration.setAuditEnabled(true);
         configuration.setAuditFrequence(30);
     }
 }
@@ -4729,17 +4678,11 @@ class Demo {
         configuration.restServerPort = 443
         //logger implementation defined by the application
         configuration.logger = DefaultLogUtility()
-        //HTTP or HTTPS while accessing REST server
-        configuration.requestHttpProtocol = false
 
-        //connection type for notification
-        configuration.notificationType = Constants.NotificationType.WebSocket
         //IP used in websocket connection creation
         configuration.webSocketServerIp = "$WEBSOCKETFQDN$";
         //port used in websocket connection creation
         configuration.webSocketServerPort = 443;
-        //set to WS or WSS protocol
-        configuration.securedWSProtocol = true;
 
         // SPiDR/Kandy Link TURN server in WebRTC's peer connection
         val iceServers = ICEServers()
@@ -4753,16 +4696,15 @@ class Demo {
         //Integer value in seconds to limit the ICE collection duration. Default is 10.
         configuration.iceCollectionTimeout = 4
 
-        //Set supported call features (early media and/or ringing feedback)
-        //SPiDR server must support these features
-        configuration.supportedCallFeatures = arrayOf(Constants.SupportedCallFeatures.EARLY_MEDIA.toString()) 
+        //Set supported call features (ringing feedback)
+        //SPiDR server must support this feature
+        configuration.isRingingFeedbackEnabled = true
 
         //Set one of the ice candidate negotiation types (ICE_VANILLA or ICE_TRICKLE)
         //The default is ICE_VANILLA
         configuration.setIceOption(ICEOptions.ICE_TRICKLE)
 
         // Audit Configuration. Default is enabled and 30 secs.
-        configuration.isAuditEnabled = true
         configuration.auditFrequence = 30
     }
 }
@@ -4794,6 +4736,9 @@ If ProGuard is enabled, RIBBON recommends adding one of the following configurat
 # Keep everything in com.genband.mobile
 -keep class com.genband.mobile.** { *; }
 -keep class org.webrtc.** { *; }
+
+# For generic types, see https://www.guardsquare.com/en/products/proguard/manual/usage/attributes
+-keepattributes InnerClasses,Signature
 #============================= MobileSDK ==============================#
 ```
 
@@ -4829,6 +4774,9 @@ The following configuration makes debugging more difficult.
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+# For generic types, see https://www.guardsquare.com/en/products/proguard/manual/usage/attributes
+-keepattributes InnerClasses,Signature
 #============================= MobileSDK ==============================#
 ```
 
@@ -4841,80 +4789,19 @@ This configuration obfuscates the MobileSDK API as much as possible while avoidi
 -dontskipnonpubliclibraryclasses
 -dontpreverify
 -verbose
-
+ 
 # Enable optimization
 -optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
 -optimizationpasses 5
 -allowaccessmodification
-
-#================================ MobileSDK ================================#
--keep class org.webrtc.AudioTrack { *; }
--keep class org.webrtc.Camera2Enumerator { *; }
--keep class org.webrtc.CameraEnumerationAndroid { *; }
--keep class org.webrtc.CameraEnumerationAndroid$CaptureFormat { *; }
--keep class org.webrtc.CameraEnumerator { *; }
--keep class org.webrtc.DTMFSender { *; }
--keep class org.webrtc.DataChannel { *; }
--keep class org.webrtc.DataChannel$Buffer { *; }
--keep class org.webrtc.DataChannel$Init { *; }
--keep class org.webrtc.DataChannel$Observer { *; }
--keep class org.webrtc.DataChannel$State { *; }
--keep class org.webrtc.EglBase { *; }
--keep class org.webrtc.EglBase$Context { *; }
--keep class org.webrtc.EglBase14 { *; }
--keep class org.webrtc.EglBase14$Context { *; }
--keep class org.webrtc.IceCandidate { *; }
--keep class org.webrtc.MediaConstraints { *; }
--keep class org.webrtc.MediaConstraints$KeyValuePair { *; }
--keep class org.webrtc.MediaCodecVideoDecoder { *; }
--keep class org.webrtc.MediaCodecVideoDecoder$DecodedOutputBuffer { *; }
--keep class org.webrtc.MediaCodecVideoDecoder$DecodedTextureBuffer { *; }
--keep class org.webrtc.MediaCodecVideoDecoder$VideoCodecType { *; }
--keep class org.webrtc.MediaCodecVideoEncoder { *; }
--keep class org.webrtc.MediaCodecVideoEncoder$OutputBufferInfo { *; }
--keep class org.webrtc.MediaCodecVideoEncoder$VideoCodecType { *; }
--keep class org.webrtc.MediaSource$State { *; }
--keep class org.webrtc.MediaStream { *; }
--keep class org.webrtc.MediaStreamDelegate { *; }
--keep class org.webrtc.MediaStreamTrack$State { *; }
--keep class org.webrtc.NetworkMonitor { *; }
--keep class org.webrtc.NetworkMonitorAutoDetect$* { *; }
--keep class org.webrtc.PeerConnection { *; }
--keep class org.webrtc.PeerConnection$BundlePolicy { *; }
--keep class org.webrtc.PeerConnection$ContinualGatheringPolicy { *; }
--keep class org.webrtc.PeerConnection$IceConnectionState { *; }
--keep class org.webrtc.PeerConnection$IceGatheringState { *; }
--keep class org.webrtc.PeerConnection$IceServer { *; }
--keep class org.webrtc.PeerConnection$IceTransportsType { *; }
--keep class org.webrtc.PeerConnection$KeyType { *; }
--keep class org.webrtc.PeerConnection$Observer { *; }
--keep class org.webrtc.PeerConnection$RTCConfiguration { *; }
--keep class org.webrtc.PeerConnection$RtcpMuxPolicy { *; }
--keep class org.webrtc.PeerConnection$SignalingState { *; }
--keep class org.webrtc.PeerConnection$TcpCandidatePolicy { *; }
--keep class org.webrtc.PeerConnectionFactory { *; }
--keep class org.webrtc.RtpReceiver { *; }
--keep class org.webrtc.RtpSender { *; }
--keep class org.webrtc.SessionDescription { *; }
--keep class org.webrtc.SessionDescription$Type { *; }
--keep class org.webrtc.StatsReport { *; }
--keep class org.webrtc.StatsReport$Value { *; }
--keep class org.webrtc.SurfaceTextureHelper { *; }
--keep class org.webrtc.voiceengine.BuildInfo { *; }
--keep class org.webrtc.VideoCapturer { *; }
--keep class org.webrtc.VideoCapturer$CapturerObserver { *; }
--keep class org.webrtc.VideoCapturer$NativeObserver { *; }
--keep class org.webrtc.VideoCapturerAndroid { *; }
--keep class org.webrtc.VideoCapturerAndroid$CapturerObserver { *; }
--keep class org.webrtc.VideoCapturerAndroid$NativeObserver { *; }
--keep class org.webrtc.voiceengine.WebRtcAudioManager { *; }
--keep class org.webrtc.voiceengine.WebRtcAudioRecord { *; }
--keep class org.webrtc.voiceengine.WebRtcAudioTrack { *; }
--keep class org.webrtc.VideoRenderer$I420Frame { *; }
--keep class org.webrtc.VideoTrack { *; }
-
+ 
+#==================================== MobileSDK ====================================#
+# Keep all in webrtc
+-keep class org.webrtc.** { *; }
+ 
+# Keep all classes that should not be obfuscate
 -keep class com.genband.mobile.api.utilities.LogManager { *; }
--keep class com.genband.mobile.core.webrtc.view.SurfaceViewRenderer { *; }
+-keep class com.genband.mobile.core.webrtc.view.SMSurfaceViewRenderer { *; }
 -keep class com.genband.mobile.core.webrtc.SDPObserver { *; }
 -keep class com.genband.mobile.core.webrtc.WebRTCCall$* { *; }
 
@@ -4928,5 +4815,8 @@ This configuration obfuscates the MobileSDK API as much as possible while avoidi
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
-#================================ MobileSDK ================================#
+ 
+# For generic types, see https://www.guardsquare.com/en/products/proguard/manual/usage/attributes
+-keepattributes InnerClasses,Signature
+#==================================== MobileSDK ====================================#
 ```
