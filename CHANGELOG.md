@@ -8,7 +8,7 @@ Kandy Link Android SDK change log.
 ## 5.14.0 - 2021-12-30
 
 ### Deprecated
-- `registerToServer(final Constants.SubscribeServices[] serviceTypes, final int expirationTime, final OnCompletionListener listener)` API in the RegistrationService will be deprecated in the version 5.16.0. But a new `registerToServer(final int expirationTime, final OnCompletionListener listener)` is introduced. Therefore developers should take the necessary action. `KAE-806`
+- `registerToServer(final Constants.SubscribeServices[] serviceTypes, final int expirationTime, final OnCompletionListener listener)` API in the RegistrationService will be removed in the version 5.16.0. But a new `registerToServer(final int expirationTime, final OnCompletionListener listener)` is introduced. Therefore developers should take the necessary action. `KAE-806`
 
 - `DTLS`, `securedWSProtocol`, `requestProtocolHttp`, `kandyVersion`, `kandyToken`, `deviceId`, `deviceNativeId`, `sendKandyTokenInRestHeader`, `connectionType`, `auditEnable`, `supportedCallFeautes`, `notificationType` parameters removed from Configuration class. `KAE-869`
 
