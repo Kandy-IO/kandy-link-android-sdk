@@ -5,10 +5,15 @@ Kandy Link Android SDK change log.
 - This project adheres to [Semantic Versioning](http://semver.org/).
 - This change log follows [keepachangelog.com](http://keepachangelog.com/) recommendations.
 
-## 5.14.0 - 2021-12-30
+## 5.15.0 - 2021-02-04
 
 ### Deprecated
-- `registerToServer(final Constants.SubscribeServices[] serviceTypes, final int expirationTime, final OnCompletionListener listener)` API in the RegistrationService will be removed in the version 5.16.0. But a new `registerToServer(final int expirationTime, final OnCompletionListener listener)` is introduced. Therefore developers should take the necessary action. `KAE-806`
+- `isRingingFeedbackEnabled` and `setRingingFeedbackEnabled` added to Configuration class methods are deprecated and will be removed in future releases. Instead `ringingFeedbackOptions` and `setRingingFeedbackOptions` should be used. 
+
+## 5.14.0 - 2020-12-30
+
+### Deprecated
+- `registerToServer(final Constants.SubscribeServices[] serviceTypes, final int expirationTime, final OnCompletionListener listener)` API in the RegistrationService will be deprecated in the version 5.16.0. But a new `registerToServer(final int expirationTime, final OnCompletionListener listener)` is introduced. Therefore developers should take the necessary action. `KAE-806`
 
 - `DTLS`, `securedWSProtocol`, `requestProtocolHttp`, `kandyVersion`, `kandyToken`, `deviceId`, `deviceNativeId`, `sendKandyTokenInRestHeader`, `connectionType`, `auditEnable`, `supportedCallFeautes`, `notificationType` parameters removed from Configuration class. `KAE-869`
 
