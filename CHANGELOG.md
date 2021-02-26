@@ -5,6 +5,11 @@ Kandy Link Android SDK change log.
 - This project adheres to [Semantic Versioning](http://semver.org/).
 - This change log follows [keepachangelog.com](http://keepachangelog.com/) recommendations.
 
+## 5.16.0 - 2021-02-26
+
+### Removed
+- `registerToServer(final Constants.SubscribeServices[] serviceTypes, final int expirationTime, final OnCompletionListener listener)` was removed.
+
 ## 5.15.0 - 2021-02-04
 
 ### Deprecated

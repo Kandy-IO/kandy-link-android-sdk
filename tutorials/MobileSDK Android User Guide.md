@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **February 04, 2021**
+Revision Date: **February 26, 2021**
 
 ## Mobile SDK overview
 
@@ -3893,47 +3893,80 @@ The Mobile SDK can retrieve audio and video RTP/RTCP statistics providing inform
 #### ** Java Code **
 
 ```java
+class StatisticsModel{
+    String callId;
+    ArrayList<Object> statistics;
+
+    StatisticsModel(String callId) {
+        this.callId = callId;
+        this.statistics = new ArrayList<>();
+    }
+}
+
 public class CallStatisticsHelper {
 
     private static final String TAG = "CallStatisticsHelper";
 
     private static File callStatisticsFile;
 
+    private static ArrayList<StatisticsModel> callStatistics = new ArrayList<>();
+
     public static void clearFile() {
         //clear the KandyLinkAndroidCallStatistics.txt first
-        File appDirectory = new File(Environment.getExternalStorageDirectory() + "/BasicSDKDemoApp");
-        File statisticsDirectory = new File(appDirectory + "/statistics");
-        File statisticsFile = new File(statisticsDirectory, "KandyLinkSDKAndroidCallStatistics" + ".txt");
+        File externalFilesDir = BasicSDKDemo.appContext.getExternalFilesDir(null);
+        callStatisticsFile = new File(externalFilesDir, "KandyLinkSDKAndroidCallStatistics" + ".txt");
 
         PrintWriter writer;
         try {
-            writer = new PrintWriter(statisticsFile);
+            writer = new PrintWriter(callStatisticsFile);
             writer.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        Log.i(TAG, "Call Statistics file cleaned.");
+        callStatistics = new ArrayList<>();
+        LogManager.log(Constants.LogLevel.TRACE, TAG, "Call Statistics file cleaned.");
 
     }
 
-    public static void saveStatistics(String data) {
+    public static void saveStatistics(String callId, String data) {
+        if (checkIsNewCall(callId)) {
+            if(callStatistics.size() == 5){
+                callStatistics.remove(0);
+            }
+
+            callStatistics.add(new StatisticsModel(callId));
+        }
+
+        Object stats = new Gson().fromJson(data, Object.class);
+        int lastIndex = callStatistics.size() - 1;
+        callStatistics.get(lastIndex).statistics.add(stats);
+    }
+
+    private static boolean checkIsNewCall(String callId) {
+        for (StatisticsModel call : callStatistics) {
+            if (callId == call.callId) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static ArrayList<Object> createJsonArray(){
+        ArrayList<Object> jsonArray = new ArrayList<>();
+        for (StatisticsModel call : callStatistics) {
+            jsonArray.add(new ArrayList<>(Arrays.asList(call.callId,call.statistics)));
+        }
+        return jsonArray;
+    }
+
+    public static void writeStatsToFile() {
+        String data = new Gson().toJson(createJsonArray());
         BufferedWriter bufferedWriter = null;
         if (isExternalStorageWritable()) {
 
-            File appDirectory = new File(Environment.getExternalStorageDirectory() + "/BasicSDKDemoApp");
-            File statisticsDirectory = new File(appDirectory + "/statistics");
-            callStatisticsFile = new File(statisticsDirectory, "KandyLinkSDKAndroidCallStatistics" + ".txt");
-
-            //create app folder
-            if (!appDirectory.exists()) {
-                appDirectory.mkdir();
-            }
-
-            //create statistics folder
-            if (!statisticsDirectory.exists()) {
-                statisticsDirectory.mkdir();
-            }
+            File externalFilesDir = BasicSDKDemo.appContext.getExternalFilesDir(null);
+            callStatisticsFile = new File(externalFilesDir, "KandyLinkSDKAndroidCallStatistics" + ".txt");
 
             if (!callStatisticsFile.exists()) {
                 try {
@@ -3944,11 +3977,11 @@ public class CallStatisticsHelper {
             }
 
             try {
-                FileWriter fileWriter = new FileWriter(callStatisticsFile, true);
+                FileWriter fileWriter = new FileWriter(callStatisticsFile);
                 bufferedWriter = new BufferedWriter(fileWriter);
-                bufferedWriter.write(data + "\n");
+                bufferedWriter.write(data);
                 bufferedWriter.flush();
-                Log.i(TAG, "Statistics have been written to the file successfully.");
+                LogManager.log(Constants.LogLevel.TRACE, TAG, "Statistics have been written to the file successfully.");
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -3962,7 +3995,7 @@ public class CallStatisticsHelper {
 
         } else if (isExternalStorageReadable()) {
             // only readable
-            Log.i(TAG, "External storage is not writable, it's only readable. Writing statistics to file is failed.");
+            LogManager.log(Constants.LogLevel.TRACE, TAG, "External storage is not writable, it's only readable. Writing statistics to file is failed.");
         } else {
             //not accessible
             LogManager.log(Constants.LogLevel.TRACE, TAG, "External storage is not accessible. Writing statistics to file is failed.");
@@ -4134,7 +4167,7 @@ It is recommended to call this method every 10 seconds as long as call continues
 currentCall.getRTPStatistics(new RTPStatisticsHandler() {
     @Override
     public void onReportReceived(String statReport) {
-       CallStatisticsHelper.saveStatistics(statReport);              
+       CallStatisticsHelper.saveStatistics(currentCall.getId(), statReport);              
     }
 });
 ```
@@ -4143,7 +4176,7 @@ currentCall.getRTPStatistics(new RTPStatisticsHandler() {
 
 ```kotlin
 currentCall?.getRTPStatistics {
-            CallStatisticsHelper.saveStatistics(it)
+            CallStatisticsHelper.saveStatistics(currentCall?.getId(), it)
         }
 ```
 <!-- tabs:end -->
