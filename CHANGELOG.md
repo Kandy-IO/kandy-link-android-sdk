@@ -38,6 +38,9 @@ Kandy Link Android SDK change log.
 
 ## 5.13.0 - 2020-12-02
 
+### Fixed
+- Crash when the application native dial pad is used is fixed. `KAE-865`
+
 ## 5.12.0 - 2020-11-04
 
 ## 5.11.0 - 2020-10-05
