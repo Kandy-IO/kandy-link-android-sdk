@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **April 26, 2021**
+Revision Date: **June 01, 2021**
 
 ## Mobile SDK overview
 
@@ -1091,6 +1091,90 @@ val registrationService = ServiceProvider.getInstance(applicationContext).regist
                 //Handle registration error
             }
         })                       
+```
+<!-- tabs:end -->
+
+### Register the client with HMAC Token
+
+MobileSDK can register to SPiDR/Kandy Link server with a valid HMAC Token obtained from SPiDR/Kandy Link. You can get information on how to get HMAC Token, see [here](#appendix-f-obtaining-a-hmac-token).
+
+Use the `registerToServer` method to register the client to the server with the values set in configuration. Failure and success calls are transmitted by the `OnCompletionListener` interface, which can be `null`. The `onSuccess` callback of the `RegistrationApplicationListener` is called after the registration request succeeds and the notification channel is connected.
+
+After the client is registered, the notification state is "CONNECTED", and the registered state is "REGISTERED". The client will try to stay in "REGISTERED" and "CONNECTED" states until the client is unregistered. The client will try to stay in "REGISTERED" and "CONNECTED" states until the client is unregistered. After registering with HMAC Token, in case the registration state is "UNREGISTERED", you must obtain a new HMAC token to register again. Because the obtained HMAC Tokens are disposable.
+
+The registration service renews registration according to the expiration time with the help of SPiDR/Kandy Link's ping messages. The `getExpirationTime` method may be called after successful registration to retrieve the expiration time (in seconds) for registration.
+
+
+###### Example: Registering to SPiDR/Kandy Link with HMAC Token
+
+<!-- tabs:start -->
+
+#### ** Java Code **
+
+```java
+RegistrationApplicationListener registrationListener = new RegistrationApplicationListener() {
+    @Override
+    public void registrationStateChanged(RegistrationStates state) {
+        // Handle registration state changes
+    }
+
+    @Override
+    public void notificationStateChanged(NotificationStates state) {
+        // Handle notification state changes
+    }
+};
+
+String token = "dV85NzEyNzcxMjI5NkBpbnN0YXByYWN0LmV0aXNhbGF0LmFlOkluc3RhQDIwMjA"; // Sample HMAC Token
+
+final RegistrationService registrationService
+         = ServiceProvider.getInstance(getApplicationContext()).getRegistrationService();
+//Get registration notifications
+registrationService.setRegistrationApplicationListener(registrationListener);
+registrationService.registerToServer(3600, token
+        new OnCompletionListener() {
+    @Override
+    public void onSuccess() {
+        //Handle registration success
+        //Developer can get expiration time, which is gathered from registration response
+        int expirationTime = registrationService.getExpirationTime();
+    }
+
+    @Override
+    public void onFail(MobileError error) {
+        //Handle registration error
+    }
+});
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val registrationListener = object : RegistrationApplicationListener {
+    override fun registrationStateChanged(state: RegistrationStates?) {
+        // Handle registration state changes
+    }
+
+    override fun notificationStateChanged(state: NotificationStates?) {
+        // Handle notification state changes
+    }
+}           
+
+val token: String = "dV85NzEyNzcxMjI5NkBpbnN0YXByYWN0LmV0aXNhbGF0LmFlOkluc3RhQDIwMjA"; // Sample HMAC Token
+
+val registrationService = ServiceProvider.getInstance(applicationContext).registrationService
+//Get registration notifications
+registrationService.setRegistrationApplicationListener(registrationListener)
+registrationService.registerToServer(3600, token, object:OnCompletionListener{
+    override fun onSuccess() {
+        //Handle registration success
+        //Developer can get expiration time, which is gathered from registration response
+        val expirationTime = registrationService.expirationTime
+    }
+
+    override fun onFail(error: MobileError?) {
+        //Handle registration error
+    }
+})                       
 ```
 <!-- tabs:end -->
 
@@ -2529,6 +2613,25 @@ override fun transferCallFailed(call: CallInterface?, error: MobileError?) {
         //called when transfer fails
         Log.e("Call", "Transfer failed : " + error?.errorMessage)
 }
+```
+<!-- tabs:end -->
+
+#### Available Codecs
+
+To get available codec list, getAvailableCodecs method can be called. The codec type can be customized with a parameter to the getAvailableCodecs method. But only Video type is allowed for now.
+
+<!-- tabs:start -->
+
+#### ** Java Code **
+
+```java
+call.getAvailableCodecs(CodecType.VIDEO);
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+call.getAvailableCodecs(CodecType.VIDEO);
 ```
 <!-- tabs:end -->
 
@@ -4886,3 +4989,317 @@ This configuration obfuscates the MobileSDK API as much as possible while avoidi
 -keepattributes InnerClasses,Signature
 #==================================== MobileSDK ====================================#
 ```
+
+<div class="page-break"></div>
+
+### Appendix F: Obtaining a HMAC Token
+
+HMAC Token is a token that allows you to register on the SPiDR/Kandy Link server. This section contains information about how to obtain a HMAC Token from SPiDR/Kandy Link server. In order to obtain HMAC token, the user to receive HMAC token must have the necessary settings made on the Kandy Link web portal. The adapter and authentication scheme key values obtained as a result of the settings made on the portal will be used to obtain the HMAC token. 
+
+<!-- tabs:start -->
+
+#### ** Java Code **
+
+```java
+void retrieveHMACToken() {
+​
+        String hmac = CryptoUtils.generateHmac(this,
+                "Authentication_Schema_Key",
+                "userName");
+​
+        String[] splittedUsername = CryptoUtils.splitUsername(userNameText.getText().toString());
+        HashMap<String,String> requestMap=new HashMap<>();
+​
+        String requestUrl = "https://sr1.genband.com/rest/version/1/application/JLAdapter/authenticationToken";
+        requestMap.put("requestURL",requestUrl);
+        requestMap.put("subscriberId",splittedUsername[0]);
+        requestMap.put("organizationId",splittedUsername[1]);
+        requestMap.put("hmacToken",hmac);
+        new HMACTokenTask().execute(requestMap);
+}
+
+private class HMACTokenTask extends AsyncTask<HashMap<String,String>, Void, String> {
+​
+        @Override
+        protected String doInBackground(HashMap<String,String>... params) {
+            HashMap<String,String> _requestMap=params[0];
+​
+            return requestHMACToken(_requestMap.get("requestURL"), _requestMap.get("subscriberId"), _requestMap.get("organizationId"), _requestMap.get("hmacToken"));
+        }
+​
+        @Override
+        protected void onPostExecute(String result) {
+​
+            if (result != null) {
+                parseTokenResult(result);
+            }
+​
+        }
+    }
+    private String requestHMACToken(String requestUrl, String subscriberId, String organizationId, String hmacToken) {
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(requestUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+​
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setRequestProperty("hmac", hmacToken);
+​
+            urlConnection.setDoOutput(true);
+​
+            OutputStream outputStream = null;
+            try {
+                String body = "{\"authenticationTokenRequest\":{\"subscriberId\":\""+subscriberId+"\",\"organizationId\":\""+organizationId+"\"}}";
+​
+                outputStream = urlConnection.getOutputStream();
+                outputStream.write(body.getBytes());
+                outputStream.flush();
+            } finally {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            }
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(urlConnection.getInputStream()));
+​
+            StringBuilder result = new StringBuilder();
+            String line;
+            if ((line = rd.readLine()) != null) {
+                result.append(line);
+            }
+            return result.toString();
+        } catch (Exception exception) {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            return null;
+        }
+    }
+    public  void parseTokenResult(String result) {
+​
+        try {
+            JSONObject tokenJSONObject = new JSONObject(result);
+​
+            JSONObject authenticationTokenResponse = tokenJSONObject.getJSONObject("authenticationTokenResponse");
+            String token = authenticationTokenResponse.getString("token");
+
+            // Use the generated token as you wish
+​
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+​
+    }
+}
+
+public class CryptoUtils {
+​
+    private final static char[] hexArray = "0123456789abcdef".toCharArray();
+​
+    // Generates hmac using username
+    public static String generateHmac(Context context, String adapter, String username) {
+        String hmac = null;
+        if (!adapter.equals("") && !username.equals("")) {
+​
+            String[] splittedUsername = splitUsername(username);
+​
+            String value = "{\"authenticationTokenRequest\":{\"subscriberId\":\"" + splittedUsername[0] + "\",\"organizationId\":\"" + splittedUsername[1] + "\"}}";
+            try {
+                hmac = hmacSha1(adapter, value);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(context,
+                    "Authentication Adapter and Schema key cannot be null",
+                    Toast.LENGTH_LONG).show();
+        }
+        return hmac;
+    }
+​
+    // Splits username and domain with '@' indicator
+    public static String[] splitUsername(String username) {
+        return username.split("@");
+    }
+​
+    // Generates hmac key usin key and value
+    private static String hmacSha1(String key, String value)
+            throws UnsupportedEncodingException, NoSuchAlgorithmException,
+            InvalidKeyException {
+        String type = "HmacSHA1";
+        SecretKeySpec secret = new SecretKeySpec(key.getBytes(), type);
+        Mac mac = Mac.getInstance(type);
+        mac.init(secret);
+        byte[] bytes = mac.doFinal(value.getBytes());
+        return bytesToHex(bytes);
+    }
+​
+​
+    private static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        for (int j = 0; j < bytes.length; j++) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun retreiveHMACToken {
+​
+    val hmac = CryptoUtils.generateHmac(this, "Authentication_Schema_Key", "username")
+​
+    val splittedUsername: Array<String> = CryptoUtils.splitUsername("username")
+    val requestMap = HashMap<String, String>()
+​
+    val requestUrl = "https://sr1.genband.com/rest/version/1/application/JLAdapter/authenticationToken"
+    requestMap["requestURL"] = requestUrl
+    requestMap["subscriberId"] = splittedUsername[0]
+    requestMap["organizationId"] = splittedUsername[1]
+    requestMap["hmacToken"] = hmac!!
+    HMACTokenTask().execute(requestMap)
+}
+​
+class HMACTokenTask : AsyncTask<HashMap<String, String>, Void, String>() {
+​
+    override fun doInBackground(vararg params: HashMap<String, String>?): String {
+        val _requestMap = params[0]!!
+​
+        return requestHMACToken(
+                _requestMap["requestURL"],
+                _requestMap["subscriberId"],
+                _requestMap["organizationId"],
+                _requestMap["hmacToken"]!!
+        )
+    }
+​
+    override fun onPostExecute(result: String?) {
+        result?.let { parseTokenResult(it) }
+    }
+​
+    private fun requestHMACToken(
+            requestUrl: String?,
+            subscriberId: String?,
+            organizationId: String?,
+            hmacToken: String?
+    ): String {
+        var urlConnection: HttpURLConnection? = null
+        return try {
+            val url = URL(requestUrl)
+            urlConnection = url.openConnection() as HttpURLConnection
+            urlConnection.requestMethod = "POST"
+            urlConnection!!.setRequestProperty("Content-Type", "application/json")
+            urlConnection.setRequestProperty("hmac", hmacToken)
+            urlConnection.doOutput = true
+            var outputStream: OutputStream? = null
+            try {
+                val body = "{\"authenticationTokenRequest\":{\"subscriberId\":\"$subscriberId\",\"organizationId\":\"$organizationId\"}}"
+                outputStream = urlConnection.outputStream
+                outputStream.write(body.toByteArray())
+                outputStream.flush()
+            } finally {
+                outputStream?.close()
+            }
+            val rd = BufferedReader(
+                    InputStreamReader(urlConnection.inputStream)
+            )
+            val result = StringBuilder()
+            var line: String?
+            if (rd.readLine().also { line = it } != null) {
+                result.append(line)
+            }
+            result.toString()
+        } catch (exception: Exception) {
+            urlConnection?.disconnect()
+            return ""
+        }
+    }
+​
+    fun parseTokenResult(result: String?) {
+        try {
+            val tokenJSONObject = JSONObject(result)
+            val authenticationTokenResponse = tokenJSONObject.getJSONObject("authenticationTokenResponse")
+            val token = authenticationTokenResponse.getString("token")
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+    }
+}
+
+class CryptoUtil {
+​
+    companion object {
+        private val hexArray = "0123456789abcdef".toCharArray()
+​
+        // Generates hmac using username
+        fun generateHmac(context: Context?, adapter: String, username: String): String? {
+            var hmac: String? = null
+            if (adapter != ""
+                && username != ""
+            ) {
+                val splittedUsername = splitUsername(username)
+                val value =
+                    "{\"authenticationTokenRequest\":{\"subscriberId\":\"" + splittedUsername[0] + "\",\"organizationId\":\"" + splittedUsername[1] + "\"}}"
+                try {
+                    hmac = hmacSha1(adapter, value)
+                } catch (e: UnsupportedEncodingException) {
+                    e.printStackTrace()
+                } catch (e: NoSuchAlgorithmException) {
+                    e.printStackTrace()
+                } catch (e: InvalidKeyException) {
+                    e.printStackTrace()
+                }
+            } else {
+                Toast.makeText(
+                    context,
+                    "Authentication Adapter and Schema key cannot be null",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            return hmac
+        }
+​
+        // Splits username and domain with '@' indicator
+        fun splitUsername(username: String): Array<String> {
+            return username.split("@".toRegex()).toTypedArray()
+        }
+​
+        // Generates hmac key usin key and value
+        @Throws(
+            UnsupportedEncodingException::class,
+            NoSuchAlgorithmException::class,
+            InvalidKeyException::class
+        )
+        private fun hmacSha1(key: String, value: String): String? {
+            val type = "HmacSHA1"
+            val secret = SecretKeySpec(key.toByteArray(), type)
+            val mac = Mac.getInstance(type)
+            mac.init(secret)
+            val bytes = mac.doFinal(value.toByteArray())
+            return bytesToHex(bytes)
+        }
+​
+​
+        private fun bytesToHex(bytes: ByteArray): String? {
+​
+            return bytes.joinToString("") {
+                Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
+            }
+        }
+    }
+}
+```
+<!-- tabs:end -->
+
+<div class="page-break"/>

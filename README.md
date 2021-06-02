@@ -20,13 +20,13 @@ The information about tutorials and documents can be found in the links below
 
 Compatible Android OS versions :
 
-* Android 4.1+
+* Android 5+
 
 Compatible KandyLink Server versions :
 
-* Kandy Link 4.7.1
+* Kandy Link 4.7.1 Patch 6
 
-* Kandy Link 4.8
+* Kandy Link 4.8 Patch 4
 
 Tested on :
 
