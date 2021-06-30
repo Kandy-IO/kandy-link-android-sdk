@@ -5,6 +5,11 @@ Kandy Link Android SDK change log.
 - This project adheres to [Semantic Versioning](http://semver.org/).
 - This change log follows [keepachangelog.com](http://keepachangelog.com/) recommendations.
 
+## 5.20.0 - 2021-06-29
+
+### Added
+- Remote video scaling type change support added.
+
 ## 5.19.0 - 2021-06-01
 
 ### Added
