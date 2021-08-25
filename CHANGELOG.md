@@ -5,6 +5,11 @@ Kandy Link Android SDK change log.
 - This project adheres to [Semantic Versioning](http://semver.org/).
 - This change log follows [keepachangelog.com](http://keepachangelog.com/) recommendations.
 
+## 5.21.1 - 2021-08-25
+
+### Fixed
+- Call initializing issue after consecutive call fixed.
+
 ## 5.21.0 - 2021-08-16
 
 ### Added

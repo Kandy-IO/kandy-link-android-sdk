@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **August 16, 2021**
+Revision Date: **August 25, 2021**
 
 ## Mobile SDK overview
 
