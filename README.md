@@ -26,7 +26,7 @@ Compatible KandyLink Server versions :
 
 * Kandy Link 4.7.1 Patch 6
 
-* Kandy Link 4.8 Patch 4
+* Kandy Link 4.8.1
 
 Tested on :
 
