@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **September 27, 2021**
+Revision Date: **January 3, 2022**
 
 ## Mobile SDK overview
 
@@ -3001,6 +3001,29 @@ fun sendParametersToCall(call: CallInterface, customParameters: Map<String?, Str
 ```
 <!-- tabs:end -->
 
+###### Example: Receiving Custom Parameters during an incoming call
+
+Custom Parameters can be retrieved and used during incoming call
+
+<!-- tabs:start -->
+
+#### ** Java-C Code **
+
+```java
+public void incomingCall(final IncomingCallInterface call) {
+   Map<String, String> sipHeaders = call.getCustomSIPHeaders();
+ }
+```
+#### ** Kotlin Code **
+
+```kotlin
+fun incomingCall(IncomingCallInterface incomingCall) {
+      var sipHeaders: Map<String, String> = mapOf()
+      sipHeaders = incomingCall.getCustomSIPHeaders
+}
+```
+<!-- tabs:end -->
+
 #### Set ICE options
 
 The Configuration class has an "iceOption" attribute used to determine the ICE behavior. The following are the available ICE options:
@@ -4693,6 +4716,74 @@ class PushModule : FirebaseMessagingService, PushSubscriptionListener {
 <!-- tabs:end -->
 
 <div class="page-break"></div>
+
+
+## Public Request Service
+Sending requests via Kandylink with the parameters given in the appropriate format.
+### Fetch API
+Kandylink needs three parameters to use this API.
+* **RequestInfo:** RequestInfo includes the information required in the request's body to be sent
+* **ResourceURL:** ResourceURL is the information of which endpoint the request will be sent to
+* **MethodType:** MethodType defines which REST method type will use (Get, Put, Post, Delete)
+
+###### Example: Sending Public Request 
+
+#### ** Java Code **
+
+```java
+JSONObject requestInfo = new JSONObject();
+            requestInfo.put("test", "123");
+            requestInfo.put("name", surname);
+
+String resourceURL = "{\"example"};
+
+PublicRequestServiceInterface publicRequestService = ServiceProvider.getInstance(context).getPublicRequestService();
+
+  publicRequestService.fetch(resourceURL, Constants.PublicRequestMethodTypes.POST, requestInfo ,new PublicRequestServiceCallback() {
+
+   @Override
+            public void onFail(MobileError mobileError) {
+                /* Handle Error */
+                    Log.e("Error", "Error Code: " + mobileError.getErrorCode() + " Error Message: " + mobileError.getErrorMessage());
+            }
+
+            @Override
+            public void onSuccess(RestResponse restResponse) {
+                /*Handle Response and Parse */
+            }
+        });
+    }
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+val requestInfo = JSONObject()
+requestInfo.put("test", "123")
+requestInfo.put("name", surname)
+
+val resourceURL = "{\"example\"}"
+val publicRequestService: PublicRequestServiceInterface;
+
+publicRequestService = ServiceProvider.getInstance(context).getPublicRequestService();
+publicRequestService.fetch(resourceURL,
+    Constants.PublicRequestMethodTypes.POST,
+    requestInfo,
+    object : PublicRequestServiceCallback() {
+            override fun onFail(mobileError: MobileError) {
+                /* Handle Error */
+                Log.e(
+                    "Error",
+                    "Error Code: " + mobileError.getErrorCode() + " Error Message: " + mobileError.getErrorMessage()
+                );
+            }
+
+            override fun onSuccess(restResponse: RestResponse) {
+                /*Handle Response and Parse */
+            }
+        }
+);
+```
 
 ## Appendices
 
