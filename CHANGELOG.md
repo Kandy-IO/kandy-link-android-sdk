@@ -5,6 +5,14 @@ Kandy Link Android SDK change log.
 - This project adheres to [Semantic Versioning](http://semver.org/).
 - This change log follows [keepachangelog.com](http://keepachangelog.com/) recommendations.
 
+## 6.0.0 - 2022-28-02
+
+### Added 
+- Upgrading WebRTC to M97. `KAE-1153`
+    - With the M97 upgrade, WebRTC backward compatibility is broken, so there might be problem with Cisco and Transfer calls.
+### Fixed
+- Fixed an issue where WebRTC could not parse SDP due to space on the codec list. `KAE-1222`
+
 ## 5.24.0 - 2022-03-01
 
 ### Added 
