@@ -7,6 +7,9 @@ Kandy Link Android SDK change log.
 
 ## 6.3.0 - 2022-27-05
 
+### Fixed
+- Freezing of remote video issue is fixed. `KAE-1246`
+
 ## 6.2.0 - 2022-25-04
 
 ## 6.1.0 - 2022-28-03
