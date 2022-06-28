@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **May 27, 2022**
+Revision Date: **June 28, 2022**
 
 ## Mobile SDK overview
 
@@ -3060,19 +3060,21 @@ Configuration.getInstance().setIceOption(ICEOptions.ICE_TRICKLE)
 
 If the receiving party prefers the information that it has successfully received the call, it can notify the calling party by the `ringingFeedbackOption` method. 
 
-The default value of this method is CLIENT. If you want to change this value, you must do so before registration.
+The default value of this method is AUTO. If you want to change this value, you must do so before registration.
 
-Possible values of the ringingFeedbackOption configuration parameter are NONE, SERVER and CLIENT.
+Possible values of the ringingFeedbackOption configuration parameter are APP, SERVER and AUTO.
 
 When ringingFeedbackOption is SERVER, SPiDR/Kandy Link sends the Ringing notification to the caller immediately after sending the callStart notification to the callee.
 
-When ringingFeedbackOption is NONE, SPiDR / Kandy Link will not send ringing feedback.
+When ringingFeedbackOption is APP, Ringing Feedback is reponsibility of application.
 
-* NONE: There will be no ringing feedback.
+The option selected during registration, cannot be changed after registration.
+
+* APP: The application side should manage the ringing feedback operations
 
 * SERVER: Server based ringing feedback.
 
-* CLIENT: Client based ringing feedback.
+* AUTO: Auto ringing feedback mechanism by SDK.
 
 ###### Example: Setting ringing feedback feature
 
@@ -3081,23 +3083,23 @@ When ringingFeedbackOption is NONE, SPiDR / Kandy Link will not send ringing fee
 #### ** Java Code **
 
 ```java
-// There will be no ringing feedback.
-Configuration.getInstance().setRingingFeedbackOption(NONE);
+// The application side should manage the ringing feedback operations
+Configuration.getInstance().setRingingFeedbackOption(APP);
 // Server based ringing feedback.
 Configuration.getInstance().setRingingFeedbackOption(SERVER);
-// Client based ringing feedback.
-Configuration.getInstance().setRingingFeedbackOption(CLIENT);
+// Auto ringing feedback mechanism by SDK.
+Configuration.getInstance().setRingingFeedbackOption(AUTO);
 ```
 
 #### ** Kotlin Code **
 
 ```kotlin
-// There will be no ringing feedback.
-Configuration.getInstance().setRingingFeedbackOption = NONE
+// The application side should manage the ringing feedback operations
+Configuration.getInstance().setRingingFeedbackOption = APP
 // Server based ringing feedback.
 Configuration.getInstance().setRingingFeedbackOption = SERVER
-// Client based ringing feedback.
-Configuration.getInstance().setRingingFeedbackOption = CLIENT
+// Auto ringing feedback mechanism by SDK.
+Configuration.getInstance().setRingingFeedbackOption = AUTO
 ```
 <!-- tabs:end -->
 
