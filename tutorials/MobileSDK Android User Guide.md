@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **August 2, 2022**
+Revision Date: **August 31, 2022**
 
 ## Mobile SDK overview
 
@@ -2317,6 +2317,81 @@ override fun videoStopFailed(call: CallInterface?, error: MobileError?) {
 ```
 <!-- tabs:end -->
 
+##### Video mute/UnMute Call
+
+Video Mute API disables the video track in a video call and stops sending the video frame to the remote side. A black screen appears instead of a local video view until the video track is enabled again using the video unMute API.
+
+###### Example: Video mute/UnMute the call
+
+<!-- tabs:start -->
+
+#### ** Java Code **
+
+```java
+public void videoMuteUnMuteExample() {
+  // unMute the video track
+  call.videoUnMute();
+
+  // mute the video track 
+  call.videoMute();
+}
+
+@Override
+public void videoUnMuteSucceed(CallInterface call) {
+  //called when video unMute call succeeds
+  Log.i("Call", "Video unMute succeeded");
+}
+
+@Override
+public void videoUnMuteFailed(CallInterface call, MobileError error) {
+  //called when video unMute call fails
+  Log.e("Call", "Video unMute failed : " + error.getErrorMessage());
+}
+
+@Override
+public void videoMuteSucceed(CallInterface call) {
+  //called when video mute call succeeds
+  Log.i("Call", "Video mute succeeded");
+}
+
+@Override
+public void videoMuteFailed(CallInterface call, MobileError error) {
+  //called when video mute call fails
+  Log.e("Call", "Video mute failed : " + error.getErrorMessage());
+}
+```
+
+#### ** Kotlin Code **
+
+```kotlin
+fun videoMuteUnMuteExample(){
+        // unMute the video track
+        call?.videoUnMute()
+
+        // mute the video track
+        call?.videoMute()
+    }
+override fun videoUnMuteSucceed(call: CallInterface?) {
+       //called when video unMute call succeeds
+       Log.i("Call", "Video unMute succeeded")
+}
+
+override fun videoUnMuteFailed(call: CallInterface?, error: MobileError?) {
+        //called when video unMute call fails
+        Log.e("Call", "Video unMute failed : " + error.getErrorMessage())
+}
+
+override fun videoMuteSucceed(call: CallInterface?) {
+        //called when video mute call succeeds
+        Log.i("Call", "Video mute succeeded")
+}
+
+override fun videoMuteFailed(call: CallInterface?,error: MobileError?) {
+        //called when video mute call fails
+        Log.e("Call", "Video mute failed : " + error?.errorMessage)
+}
+```
+<!-- tabs:end -->
 ##### Hold/Unhold Call and Double Hold
 While in a call, a participant may be placed on hold by calling `holdCall` method. When operation succeeds, media transfer between participants stops, and call state will change to `ON_HOLD` state. Remote participant will see this call session in `REMOTELY_HELD` state.
 
@@ -2912,6 +2987,80 @@ The aspect ratio value is provided as the width/height of the video. For example
 * 480x640 (3:4), the aspect ratio will be 0.75
 
 **Note:** If the application does not provide any view to the MobileSDK, the MobileSDK will not provide any aspect ratio notification to the application.
+
+#### Foreground Service
+Foreground service makes your app run in the background as if it were in the foreground. Some apps need it for example call apps. You should use foreground services in the call activity of the application you are developing using the SDK. While the foreground service is active and your app is in the background, your application continues to use resources and it can do all the things it needs to do.
+You should show a notification to the user when using the foreground service. The notification cannot be dismissed unless the service is either stopped or removed from the foreground.
+This document explains in a simple way how to use foreground services. 
+For more detailed information visit the [Android official website](https://developer.android.com/guide/components/foreground-services#kotlin)
+### Request the foreground service permission
+Applications targeting API 28 and later should request `FOREGOUND_SERVICE` permission as follows.
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" ...>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <application ...>
+        ...
+    </application>
+</manifest>
+```
+### Start a foreground service
+if your app wants to access camera and microphone it should specify them as follows:
+```xml
+<manifest>
+    ...
+    <service ... android:foregroundServiceType="microphone|camera" />
+</manifest>
+```
+Start the foreground service.
+<!-- tabs:start -->
+#### ** Java Code **
+```java
+Context context = getApplicationContext();
+Intent intent = new Intent(...); // Build the intent for the service
+context.startForegroundService(intent);
+```
+#### ** Kotlin Code **
+```kotlin
+val intent = Intent(...) // Build the intent for the service
+applicationContext.startForegroundService(intent)
+```
+<!-- tabs:end -->
+**Here is an example:**
+<!-- tabs:start -->
+#### ** Java Code **
+```java
+// If the notification supports a direct reply action, use
+// PendingIntent.FLAG_MUTABLE instead.
+Intent notificationIntent = new Intent(this, CallActivity.class);
+PendingIntent pendingIntent =
+        PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_IMMUTABLE);
+Notification notification =
+          new Notification.Builder(this, CHANNEL_DEFAULT_IMPORTANCE)
+    .setContentTitle(getText(R.string...))
+    ...
+    .setTicker(getText(R.string...))
+    .build();
+startForeground(ONGOING_NOTIFICATION_ID, notification);
+```
+#### ** Kotlin Code **
+```kotlin
+// If the notification supports a direct reply action, use
+// PendingIntent.FLAG_MUTABLE instead.
+val pendingIntent: PendingIntent =
+        Intent(this, CallActivity::class.java).let { notificationIntent ->
+            PendingIntent.getActivity(this, 0, notificationIntent,
+                    PendingIntent.FLAG_IMMUTABLE)
+        }
+val notification: Notification = Notification.Builder(this, CHANNEL_DEFAULT_IMPORTANCE)
+        .setContentTitle(getText(R.string...))
+        ...
+        
+        .setTicker(getText(R.string...))
+        .build()
+startForeground(ONGOING_NOTIFICATION_ID, notification)
+```
+<!-- tabs:end -->
 
 ### Advanced Usage of Call Service
 
