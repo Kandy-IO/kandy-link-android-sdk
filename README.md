@@ -24,9 +24,9 @@ Compatible Android OS versions :
 
 Compatible KandyLink Server versions :
 
-* Kandy Link 4.7.1 Patch 6
-
 * Kandy Link 4.8.1
+
+* Kandy Link 4.9
 
 Tested on :
 

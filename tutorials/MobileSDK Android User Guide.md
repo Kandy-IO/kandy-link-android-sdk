@@ -1,7 +1,7 @@
 # Kandy Link Android SDK - User Guide
 Version Number: **$SDK_VERSION$**
 <br>
-Revision Date: **August 31, 2022**
+Revision Date: **October 31, 2022**
 
 ## Mobile SDK overview
 
@@ -306,19 +306,14 @@ fun configExample(){
 ```java
 public void register() {
     RegistrationApplicationListener registrationListener = new RegistrationApplicationListener() {
-        @Override
-        public void registrationStateChanged(RegistrationStates state) {
-            // Handle registration state changes
+         @Override
+        public void registrationDropped(MobileError mobileError) {
+            // Handle registration dropped
         }
 
         @Override
         public void notificationStateChanged(NotificationStates state) {
             // Handle notification state changes
-        }
-
-        @Override
-        public void onInternalError(MobileError mobileError) {
-            // Handle internal errors
         }
     };
 
@@ -346,17 +341,13 @@ public void register() {
 
 ```kotlin
 fun register(){
-        val registrationApplicationListener = object : RegistrationApplicationListener {
-            override fun registrationStateChanged(state: RegistrationStates?) {
-                // Handle registration state changes
+        val registrationApplicationListener = object : RegistrationApplicationListener {   
+             override fun registrationDropped(mobileError: MobileError?) {
+                // Handle registration dropped
             }
 
             override fun notificationStateChanged(state: NotificationStates?) {
                 // Handle notification state changes
-            }
-            
-            override fun onInternalError(mobileError: MobileError?) {
-                // Handle internal errors
             }
         }
         
@@ -1021,7 +1012,7 @@ MobileSDK should be registered to SPiDR/Kandy Link before using any other servic
 
 Use the `registerToServer` method to register the client to the server with the values set in configuration. Failure and success calls are transmitted by the `OnCompletionListener` interface, which can be `null`. The `onSuccess` callback of the `RegistrationApplicationListener` is called after the registration request succeeds and the notification channel is connected.
 
-After the client is registered, the notification state is "CONNECTED", and the registered state is "REGISTERED". The client will try to stay in "REGISTERED" and "CONNECTED" states until the client is unregistered.
+After the client is registered, the notification state is "CONNECTED". The client will try to stay in "CONNECTED" states until the client is unregistered.
 
 The registration service renews registration according to the expiration time with the help of SPiDR/Kandy Link's ping messages. The `getExpirationTime` method may be called after successful registration to retrieve the expiration time (in seconds) for registration.
 
@@ -1035,10 +1026,10 @@ The registration service renews registration according to the expiration time wi
 ```java
 RegistrationApplicationListener registrationListener = new RegistrationApplicationListener() {
     @Override
-    public void registrationStateChanged(RegistrationStates state) {
-        // Handle registration state changes
+    public void registrationDropped(MobileError mobileError) {
+        // Handle registration dropped
     }
-
+     
     @Override
     public void notificationStateChanged(NotificationStates state) {
         // Handle notification state changes
@@ -1069,8 +1060,8 @@ registrationService.registerToServer(3600,
 
 ```kotlin
 val registrationListener = object : RegistrationApplicationListener {
-            override fun registrationStateChanged(state: RegistrationStates?) {
-                // Handle registration state changes
+            override fun registrationDropped(mobileError: MobileError?) {
+                // Handle registration dropped
             }
 
             override fun notificationStateChanged(state: NotificationStates?) {
@@ -1100,7 +1091,7 @@ MobileSDK can register to SPiDR/Kandy Link server with a valid HMAC Token obtain
 
 Use the `registerToServer` method to register the client to the server with the values set in configuration. Failure and success calls are transmitted by the `OnCompletionListener` interface, which can be `null`. The `onSuccess` callback of the `RegistrationApplicationListener` is called after the registration request succeeds and the notification channel is connected.
 
-After the client is registered, the notification state is "CONNECTED", and the registered state is "REGISTERED". The client will try to stay in "REGISTERED" and "CONNECTED" states until the client is unregistered. The client will try to stay in "REGISTERED" and "CONNECTED" states until the client is unregistered. After registering with HMAC Token, in case the registration state is "UNREGISTERED", you must obtain a new HMAC token to register again. Because the obtained HMAC Tokens are disposable.
+After the client is registered, the notification state is "CONNECTED". The client will try to stay in "CONNECTED" states until the client is unregistered. After registering with HMAC Token, in case the notification state is "DISCONNECTED", you must obtain a new HMAC token to register again. Because the obtained HMAC Tokens are disposable.
 
 The registration service renews registration according to the expiration time with the help of SPiDR/Kandy Link's ping messages. The `getExpirationTime` method may be called after successful registration to retrieve the expiration time (in seconds) for registration.
 
@@ -1114,8 +1105,8 @@ The registration service renews registration according to the expiration time wi
 ```java
 RegistrationApplicationListener registrationListener = new RegistrationApplicationListener() {
     @Override
-    public void registrationStateChanged(RegistrationStates state) {
-        // Handle registration state changes
+    public void registrationDropped(MobileError mobileError) {
+        // Handle registration dropped
     }
 
     @Override
@@ -1150,8 +1141,8 @@ registrationService.registerToServer(3600, token
 
 ```kotlin
 val registrationListener = object : RegistrationApplicationListener {
-    override fun registrationStateChanged(state: RegistrationStates?) {
-        // Handle registration state changes
+    override fun registrationDropped(mobileError: MobileError?) {
+        // Handle registration dropped
     }
 
     override fun notificationStateChanged(state: NotificationStates?) {
@@ -1180,7 +1171,7 @@ registrationService.registerToServer(3600, token, object:OnCompletionListener{
 
 ### Unregister the client
 
-Use the unregisterFromServer method to unregister the client from the server. Failure and success calls are transmitted by the `OnCompletionListener` interface, which can be null. After the client is unregistered, the notification state is "DISCONNECTED", and the registered state is "UNREGISTERED".
+Use the unregisterFromServer method to unregister the client from the server. Failure and success calls are transmitted by the `OnCompletionListener` interface, which can be null. After the client is unregistered, the notification state is "DISCONNECTED".
 
 ###### Example: Unregistering from SPiDR/Kandy Link
 
@@ -1190,10 +1181,6 @@ Use the unregisterFromServer method to unregister the client from the server. Fa
 
 ```java
 RegistrationApplicationListener registrationListener = new RegistrationApplicationListener() {
-    @Override
-    public void registrationStateChanged(RegistrationStates state) {
-        // Handle registration state changes
-    }
 
     @Override
     public void notificationStateChanged(NotificationStates state) {
@@ -1220,9 +1207,6 @@ registrationService.unregisterFromServer(new OnCompletionListener() {
 
 ```kotlin
 val registrationListener = object : RegistrationApplicationListener {
-            override fun registrationStateChanged(state: RegistrationStates?) {
-                // Handle registration state changes
-            }
 
             override fun notificationStateChanged(state: NotificationStates?) {
                 // Handle notification state changes
